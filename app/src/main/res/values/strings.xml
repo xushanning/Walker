@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">行者</string>
+    <!--主页的导航栏-->
+    <string name="club">俱乐部</string>
+    <string name="discover">发现</string>
+    <string name="personal">我的</string>
+    <string name="roadBook">路书</string>
+    <string name="sport">运动</string>
+
+    <!--运动碎片-->
+    <string name="fg_sport_gps">GPS</string>
+    <string name="fg_sport_title">行者骑行</string>
+    <string name="fg_sport_speed">时速(km/h)</string>
+    <string name="fg_sport_mileage">里程(km)</string>
+    <string name="fg_sport_time">时间</string>
+    <string name="fg_sport_average_speed">均速(km/h)</string>
+    <string name="fg_sport_max_speed">极速(km/h)</string>
+    <string name="fg_sport_altitude">海拔(m)</string>
+    <string name="fg_sport_climb">爬升(m)</string>
+    <string name="fg_sport_begin_riding">开始骑行</string>
+    <string name="fg_sport_sport_map">运动地图</string>
+</resources>

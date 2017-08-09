@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="#000000"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <RadioButton
+            android:id="@+id/rb_sport"
+            style="@style/main_tab_item"
+            android:layout_marginTop="3dp"
+            android:checked="true"
+            android:drawableTop="@drawable/main_tab_bg_sport"
+            android:text="@string/sport" />
+
+        <RadioButton
+            android:id="@+id/rb_personal"
+            style="@style/main_tab_item"
+            android:layout_marginTop="3dp"
+            android:drawableTop="@drawable/main_tab_bg_personal"
+            android:text="@string/personal" />
+
+        <RadioButton
+            android:id="@+id/rb_discover"
+            style="@style/main_tab_item"
+            android:layout_marginTop="3dp"
+            android:drawableTop="@drawable/main_tab_bg_discover"
+            android:text="@string/discover" />
+
+        <RadioButton
+            android:id="@+id/rb_roadBook"
+            style="@style/main_tab_item"
+            android:layout_marginTop="3dp"
+            android:drawableTop="@drawable/main_tab_bg_road_book"
+            android:text="@string/roadBook" />
+
+        <RadioButton
+            android:id="@+id/rb_club"
+            style="@style/main_tab_item"
+            android:layout_marginTop="3dp"
+            android:drawableTop="@drawable/main_tab_bg_club"
+            android:text="@string/club" />
+    </RadioGroup>
+
+    <FrameLayout
+        android:id="@+id/main_frameLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/radioGroup"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+</android.support.constraint.ConstraintLayout>

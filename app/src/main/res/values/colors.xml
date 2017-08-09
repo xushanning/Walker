@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!--运动碎片的小字体颜色-->
+    <color name="fg_sport_small">#A1A1A1</color>
+    <!--运动碎片的大字体颜色-->
+    <color name="fg_sport_big">#000000</color>
+    <!--线的颜色-->
+    <color name="fg_sport_line">#9E9E9E</color>
+    <!--gps信号的颜色-->
+    <color name="fg_sport_gps">#D8D8D8</color>
+</resources>
