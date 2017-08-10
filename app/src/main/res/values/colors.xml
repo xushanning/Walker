@@ -3,6 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorTransparent">#00000000</color>
 
     <!--运动碎片的小字体颜色-->
     <color name="fg_sport_small">#A1A1A1</color>
@@ -12,4 +14,7 @@
     <color name="fg_sport_line">#9E9E9E</color>
     <!--gps信号的颜色-->
     <color name="fg_sport_gps">#D8D8D8</color>
+
+    <!--我的碎片的颜色-->
+    <color name="fg_personal_grade_bg">#99353537</color>
 </resources>

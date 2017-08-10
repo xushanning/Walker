@@ -15,10 +15,7 @@ public class ClubFragment extends BaseFragment<ClubContract.IClubPresenter> impl
         return R.layout.fragment_club;
     }
 
-    @Override
-    public int getScreenMode() {
-        return DYEING_MODE;
-    }
+
 
     @Override
     public void initOthers() {

@@ -14,10 +14,7 @@ public class DiscoverFragment extends BaseFragment<DiscoverContract.IDiscoverPre
     public int getLayoutId() {
         return R.layout.fragment_discover;
     }
-    @Override
-    public int getScreenMode() {
-        return DYEING_MODE;
-    }
+
 
     @Override
     public void initOthers() {

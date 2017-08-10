@@ -19,4 +19,13 @@
     <string name="fg_sport_climb">爬升(m)</string>
     <string name="fg_sport_begin_riding">开始骑行</string>
     <string name="fg_sport_sport_map">运动地图</string>
+
+    <!--个人中心碎片-->
+    <string name="fg_personal_login">立即登录</string>
+    <string name="fg_personal_fans">粉丝</string>
+    <string name="fg_personal_follow">关注</string>
+    <string name="fg_personal_edit_info">编辑个人信息</string>
+    <string name="fg_personal_grade">等级特权</string>
+    <string name="fg_personal_account">行者号</string>
 </resources>
+

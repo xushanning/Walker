@@ -7,9 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.orhanobut.logger.Logger;
 import com.xu.walker.R;
 import com.xu.walker.base.BaseFragment;
 import com.xu.walker.utils.ToastUtil;
@@ -45,16 +43,15 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     Button btStart;
     @BindView(R.id.bt_sport_map)
     Button btMap;
+    @BindView(R.id.view_status_bar)
+    View viewStatusBar;
 
     @Override
     public int getLayoutId() {
         return R.layout.fragment_sport;
     }
 
-    @Override
-    public int getScreenMode() {
-        return DYEING_MODE;
-    }
+
 
     @Override
     public void initOthers() {
@@ -63,7 +60,8 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
 
     @Override
     public void initView(Bundle savedInstanceState) {
-
+        ViewGroup.LayoutParams params = viewStatusBar.getLayoutParams();
+        params.height = getStatusBarHeight();
     }
 
     @Override
@@ -133,5 +131,14 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     @Override
     public void setClimb(float climb) {
 
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

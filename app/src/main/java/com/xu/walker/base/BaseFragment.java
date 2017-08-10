@@ -25,16 +25,12 @@ public abstract class BaseFragment<T extends IBasePresenter> extends Fragment im
     private View mView;
     protected T mPresenter;
     private Unbinder bind;
-    //全屏模式
-    public int FULL_SCREEN_MODE = 0;
-    //着色模式
-    public int DYEING_MODE = 1;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(getLayoutId(), container, false);
-        initScreen(getScreenMode());
+        initScreen();
         bind = ButterKnife.bind(this, mView);
         initPresenter();
         if (mPresenter != null) {
@@ -47,7 +43,6 @@ public abstract class BaseFragment<T extends IBasePresenter> extends Fragment im
 
     public abstract int getLayoutId();
 
-    public abstract int getScreenMode();
 
     public abstract void initOthers();
 
@@ -55,31 +50,14 @@ public abstract class BaseFragment<T extends IBasePresenter> extends Fragment im
 
     public abstract void initPresenter();
 
-    private void initScreen(int mode) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getActivity().getWindow();
-            if (mode == FULL_SCREEN_MODE) {
-                //全屏模式
-                //设置透明状态栏,这样才能让 ContentView 向上
-                window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            } else if (mode == DYEING_MODE) {
-                //取消设置透明状态栏,使 ContentView 内容不再覆盖状态栏
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            }
-            //需要设置这个 flag 才能调用 setStatusBarColor 来设置状态栏颜色
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            //设置状态栏颜色
-            int statusColor = Color.parseColor("#212121");
-            window.setStatusBarColor(statusColor);
-
-            ViewGroup mContentView = (ViewGroup) getActivity().findViewById(Window.ID_ANDROID_CONTENT);
-            View mChildView = mContentView.getChildAt(0);
-            if (mode == FULL_SCREEN_MODE && mChildView != null) {
-                //全屏模式
-                ViewCompat.setFitsSystemWindows(mChildView, true);
-            } else if (mode == DYEING_MODE && mChildView != null) {
-                ViewCompat.setFitsSystemWindows(mChildView, false);
-            }
+    private void initScreen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Window win = getActivity().getWindow();
+            WindowManager.LayoutParams winParams = win.getAttributes();
+            winParams.flags = winParams.flags & ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
+            int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+            winParams.flags |= bits;
+            win.setAttributes(winParams);
         } else {
             Logger.d("版本过低，不支持沉浸式标题栏");
         }

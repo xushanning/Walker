@@ -9,14 +9,10 @@ import com.xu.walker.base.BaseFragment;
  * Created by xusn10 on 2017/8/7.
  */
 
-public class RoadBookFragment extends BaseFragment<RoadBookContract.IRoadBookPresenter>implements RoadBookContract.IRoadBookView{
+public class RoadBookFragment extends BaseFragment<RoadBookContract.IRoadBookPresenter> implements RoadBookContract.IRoadBookView {
     @Override
     public int getLayoutId() {
         return R.layout.fragment_road_book;
-    }
-    @Override
-    public int getScreenMode() {
-        return DYEING_MODE;
     }
 
     @Override
