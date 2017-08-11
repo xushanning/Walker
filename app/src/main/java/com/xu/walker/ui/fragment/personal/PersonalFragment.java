@@ -1,7 +1,9 @@
 package com.xu.walker.ui.fragment.personal;
 
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +12,13 @@ import android.widget.TextView;
 
 import com.xu.walker.R;
 import com.xu.walker.base.BaseFragment;
+import com.xu.walker.ui.activity.login.LoginActivity;
+import com.xu.walker.utils.ToastUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 
 /**
  * Created by xusn10 on 2017/8/7.
@@ -27,6 +33,8 @@ public class PersonalFragment extends BaseFragment<PersonalContract.IPersonalPre
     TextView tvGrade;
     @BindView(R.id.tv_pg_personal_account)
     TextView tvAccount;
+    @BindView(R.id.cl_login)
+    ConstraintLayout clLogin;
 
     @Override
     public int getLayoutId() {
@@ -73,4 +81,10 @@ public class PersonalFragment extends BaseFragment<PersonalContract.IPersonalPre
     }
 
 
+    @OnClick(R.id.cl_login)
+    public void onClick() {
+        //ToastUtil.toastShort(getContext(), "登陆按钮被点击了");
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        startActivity(intent);
+    }
 }

@@ -21,48 +21,51 @@
                 android:alpha="1"
                 android:scaleType="fitXY"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0"
+                app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@mipmap/personal_bg" />
 
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/cl_login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+
                 android:background="#ffffff"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/imageView"
-                app:layout_constraintHorizontal_bias="0.49"
+                app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
                 app:layout_constraintLeft_toLeftOf="@+id/imageView"
                 app:layout_constraintRight_toRightOf="@+id/imageView"
-                app:layout_constraintTop_toTopOf="@+id/imageView">
+                app:layout_constraintTop_toTopOf="@+id/imageView"
+                android:layout_width="90dp"
+                android:layout_height="30dp">
 
-                <Button
+
+                <TextView
+                    android:gravity="center"
                     android:id="@+id/textView2"
-                    android:layout_width="88dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
-                    android:layout_marginEnd="1dp"
-                    android:layout_marginLeft="1dp"
-                    android:layout_marginRight="1dp"
-                    android:layout_marginStart="1dp"
-                    android:layout_marginTop="1dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:background="#189ADB"
                     android:text="@string/fg_personal_login"
                     android:textColor="#ffffff"
-                    android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginBottom="1dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginLeft="1dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginRight="1dp"
+                    android:textSize="17sp" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraintLayout"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintLeft_toLeftOf="@+id/imageView"
@@ -201,8 +204,8 @@
 
                 <TextView
                     android:id="@+id/tv_pg_personal_edit_info"
-                    android:layout_width="100dp"
-                    android:layout_height="30dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginTop="20dp"
@@ -216,8 +219,8 @@
 
                 <TextView
                     android:id="@+id/tv_pg_personal_grade"
-                    android:layout_width="80dp"
-                    android:layout_height="25dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:background="@drawable/sp_pg_personal_grade"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_pg_personal_account"
                     app:layout_constraintLeft_toLeftOf="@+id/imageView6"
@@ -226,8 +229,8 @@
 
                 <TextView
                     android:id="@+id/tv_pg_personal_account"
-                    android:layout_width="80dp"
-                    android:layout_height="25dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:background="@drawable/sp_pg_personal_grade"

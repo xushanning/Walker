@@ -27,5 +27,24 @@
     <string name="fg_personal_edit_info">编辑个人信息</string>
     <string name="fg_personal_grade">等级特权</string>
     <string name="fg_personal_account">行者号</string>
+
+    <!--登陆界面-->
+    <string name="a_login_login">登陆</string>
+    <string name="a_login_register">注册</string>
+    <string name="a_login_slogan">虽千万里 吾往矣</string>
+    <string name="a_login_account_hint">请输入手机/邮箱</string>
+    <string name="a_login_password_hint">请输入密码</string>
+    <string name="a_login_retrieve_pass">找回密码</string>
+    <string name="a_login_login_type">选择登陆方式</string>
+    <string name="a_login_qq">QQ</string>
+    <string name="a_login_weChat">微信</string>
+    <string name="a_login_blog">微博</string>
+
+    <!--注册界面-->
+    <string name="a_register_title">注册</string>
+    <string name="a_register_validate">验证</string>
+    <string name="a_register_pass">请输入密码</string>
+    <string name="a_register_validate_num">请输入验证码</string>
+    <string name="a_register_phone_num">请输入手机号</string>
 </resources>
 
