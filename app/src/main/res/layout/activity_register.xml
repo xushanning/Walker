@@ -56,7 +56,7 @@
     <View
         android:id="@+id/view6"
         android:layout_width="0dp"
-        android:layout_height="150dp"
+        android:layout_height="145dp"
         android:layout_marginTop="16dp"
         android:background="@android:color/white"
         app:layout_constraintHorizontal_bias="0.0"
@@ -106,11 +106,11 @@
         android:gravity="center"
         android:text="@string/a_register_validate"
         android:textColor="@android:color/white"
+        android:textSize="17sp"
         app:layout_constraintBottom_toBottomOf="@+id/editText"
         app:layout_constraintRight_toRightOf="@+id/view6"
         app:layout_constraintTop_toTopOf="@+id/editText"
-        app:layout_constraintVertical_bias="0.62"
-        android:textSize="17sp" />
+        app:layout_constraintVertical_bias="0.62" />
 
     <ImageView
         android:id="@+id/imageView14"
@@ -184,4 +184,52 @@
         app:layout_constraintLeft_toLeftOf="@+id/editText4"
         app:layout_constraintRight_toRightOf="@+id/view6"
         app:layout_constraintTop_toTopOf="@+id/imageView15" />
+
+    <TextView
+        android:id="@+id/textView27"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/a_register_no_validate"
+        app:layout_constraintLeft_toLeftOf="@+id/imageView15"
+        app:layout_constraintTop_toBottomOf="@+id/view6" />
+
+    <TextView
+        android:id="@+id/textView29"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/a_register_voice"
+        android:textColor="@color/a_login_login_bt"
+        tools:layout_editor_absoluteX="136dp"
+        tools:layout_editor_absoluteY="296dp" />
+
+    <TextView
+        android:id="@+id/textView37"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:text="@string/a_register_email"
+        android:textColor="@color/a_login_login_bt"
+        app:layout_constraintBottom_toBottomOf="@+id/textView29"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView29" />
+
+    <TextView
+        android:id="@+id/tv_activity_register_register"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/sp_currency"
+        android:gravity="center"
+        android:text="@string/a_register_title"
+        android:textColor="@android:color/white"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView29"
+        android:textSize="20sp" />
 </android.support.constraint.ConstraintLayout>

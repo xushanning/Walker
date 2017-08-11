@@ -46,5 +46,8 @@
     <string name="a_register_pass">请输入密码</string>
     <string name="a_register_validate_num">请输入验证码</string>
     <string name="a_register_phone_num">请输入手机号</string>
+    <string name="a_register_no_validate">收不到验证码，试试</string>
+    <string name="a_register_voice">语音验证</string>
+    <string name="a_register_email">邮箱注册</string>
 </resources>
 
