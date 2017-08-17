@@ -1,7 +1,7 @@
 package com.xu.walker.ui.fragment.sport;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -10,10 +10,10 @@ import android.widget.TextView;
 
 import com.xu.walker.R;
 import com.xu.walker.base.BaseFragment;
+import com.xu.walker.ui.activity.sportmap.SportMapActivity;
 import com.xu.walker.utils.ToastUtil;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -94,6 +94,8 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                 break;
             case R.id.bt_sport_map:
                 ToastUtil.toastShort(getContext(), "地图");
+                Intent intent=new Intent(getActivity(), SportMapActivity.class);
+                startActivity(intent);
                 break;
         }
     }
