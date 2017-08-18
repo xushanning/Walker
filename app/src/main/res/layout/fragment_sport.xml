@@ -67,7 +67,7 @@
         android:id="@+id/textView19"
         android:layout_width="55dp"
         android:layout_height="30dp"
-        android:background="@drawable/sp_sports_swith"
+        android:background="@drawable/sp_sports_switch"
         app:layout_constraintBottom_toBottomOf="@+id/tv_sport_title"
         app:layout_constraintHorizontal_bias="0.17"
         app:layout_constraintLeft_toLeftOf="parent"

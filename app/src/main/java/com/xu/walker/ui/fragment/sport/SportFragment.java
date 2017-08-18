@@ -52,7 +52,6 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     }
 
 
-
     @Override
     public void initOthers() {
 
@@ -93,8 +92,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                 ToastUtil.toastShort(getContext(), "开始");
                 break;
             case R.id.bt_sport_map:
-                ToastUtil.toastShort(getContext(), "地图");
-                Intent intent=new Intent(getActivity(), SportMapActivity.class);
+                Intent intent = new Intent(getActivity(), SportMapActivity.class);
                 startActivity(intent);
                 break;
         }

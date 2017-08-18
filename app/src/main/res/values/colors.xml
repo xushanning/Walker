@@ -17,6 +17,7 @@
 
     <!--我的碎片的颜色-->
     <color name="fg_personal_grade_bg">#99353537</color>
+    <color name="fg_personal_line">#F2F2F2</color>
 
     <!--登陆界面颜色-->
     <color name="a_login_login_bt">#007AC2</color>

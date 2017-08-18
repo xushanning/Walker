@@ -5,14 +5,16 @@ import android.os.Bundle;
 import com.amap.api.maps.MapView;
 import com.xu.walker.R;
 import com.xu.walker.base.BaseActivity;
+import com.xu.walker.base.BaseMapActivity;
+import com.xu.walker.base.IBaseView;
 
 import butterknife.BindView;
 
-public class SportMapActivity extends BaseActivity<SportMapContract.ISportMapPresenter> implements SportMapContract.ISportMapView {
+public class SportMapActivity extends BaseMapActivity<SportMapContract.ISportMapPresenter> implements SportMapContract.ISportMapView {
 
 
     @BindView(R.id.map_sport_map)
-    MapView mapSport;
+    MapView mMapView;
 
     @Override
     public int getLayoutId() {
@@ -26,7 +28,7 @@ public class SportMapActivity extends BaseActivity<SportMapContract.ISportMapPre
 
     @Override
     public void initView(Bundle savedInstanceState) {
-        mapSport.onCreate(savedInstanceState);
+        initMap(savedInstanceState);
     }
 
     @Override
@@ -44,41 +46,10 @@ public class SportMapActivity extends BaseActivity<SportMapContract.ISportMapPre
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //在activity执行onDestroy时执行mMapView.onDestroy()，销毁地图
-        mapSport.onDestroy();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //在activity执行onResume时执行mMapView.onResume ()，
-        if (mapSport != null) {
-            mapSport.onResume();
-        }
+    private void initMap(Bundle savedInstanceState) {
+        mMapView.onCreate(savedInstanceState);
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mapSport != null) {
-            mapSport.onPause();
-        }
-        //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
-
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，保存地图当前的状态
-        if (mapSport != null) {
-            mapSport.onSaveInstanceState(outState);
-        }
-
-    }
 
 }
