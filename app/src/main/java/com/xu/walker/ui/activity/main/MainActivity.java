@@ -17,7 +17,6 @@ import com.xu.walker.ui.fragment.roadbook.RoadBookFragment;
 import com.xu.walker.ui.fragment.sport.SportFragment;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 //
 //                                  _oo8oo_
@@ -188,6 +187,33 @@ public class MainActivity extends BaseActivity<MainContract.IMainPresenter> impl
 
     }
 
+    //根据运动的选择，设置导航栏的图片
+    public void setNavigationImg(int sportType) {
+        switch (sportType) {
+            case SportFragment.SPORT_TYPE_BIKE:
+
+                break;
+            case SportFragment.SPORT_TYPE_RUN:
+
+                break;
+            case SportFragment.SPORT_TYPE_FOOTER:
+
+                break;
+            case SportFragment.SPORT_TYPE_SKIING:
+
+                break;
+            case SportFragment.SPORT_TYPE_SWIMMING:
+
+                break;
+            case SportFragment.SPORT_TYPE_INDOOR:
+
+                break;
+            case SportFragment.SPORT_TYPE_FREE:
+
+                break;
+        }
+
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

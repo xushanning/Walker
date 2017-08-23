@@ -11,21 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.orhanobut.logger.Logger;
 import com.xu.walker.R;
-import com.xu.walker.TestActivity;
 import com.xu.walker.base.BaseFragment;
+import com.xu.walker.ui.activity.main.MainActivity;
 import com.xu.walker.ui.activity.sportmap.SportMapActivity;
 import com.xu.walker.utils.ToastUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,22 +62,16 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     @BindView(R.id.title_view)
     View titleView;
 
-    private static final int SPORT_TYPE_BIKE = 1;
-    private static final int SPORT_TYPE_RUN = 2;
-    private static final int SPORT_TYPE_FOOTER = 3;
-    private static final int SPORT_TYPE_SKIING = 4;
-    private static final int SPORT_TYPE_SWIMMING = 5;
-    private static final int SPORT_TYPE_INDOOR = 6;
-    private static final int SPORT_TYPE_FREE = 7;
+    public static final int SPORT_TYPE_BIKE = 1;
+    public static final int SPORT_TYPE_RUN = 2;
+    public static final int SPORT_TYPE_FOOTER = 3;
+    public static final int SPORT_TYPE_SKIING = 4;
+    public static final int SPORT_TYPE_SWIMMING = 5;
+    public static final int SPORT_TYPE_INDOOR = 6;
+    public static final int SPORT_TYPE_FREE = 7;
     //当前选中的rb
     private int selectRadioButton = SPORT_TYPE_BIKE;
-    RadioButton rbBike = null;
-    RadioButton rbRun = null;
-    RadioButton rbFooter = null;
-    RadioButton rbSkiing = null;
-    RadioButton rbSwimming = null;
-    RadioButton rbIndoor = null;
-    RadioButton rbFree = null;
+
 
     @Override
     public int getLayoutId() {
@@ -127,9 +116,8 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                 ToastUtil.toastShort(getContext(), "设置");
                 break;
             case R.id.bt_sport_start:
-                ToastUtil.toastShort(getContext(), "开始");
-                Intent intent1 = new Intent(getActivity(), TestActivity.class);
-                startActivity(intent1);
+                btStart.setBackgroundColor(Color.parseColor("#E84E40"));
+                btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
                 break;
             case R.id.bt_sport_map:
                 Intent intent = new Intent(getActivity(), SportMapActivity.class);
@@ -240,58 +228,44 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         rbBike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectRadioButton = SPORT_TYPE_BIKE;
-                popupWindow.dismiss();
-                ToastUtil.toastShort(getContext(), getResources().getString(R.string.toast_sport_type_bike));
+                setTypeSelectAction(SPORT_TYPE_BIKE, popupWindow, getResources().getString(R.string.fg_sport_begin_riding), getResources().getString(R.string.toast_sport_type_bike));
             }
         });
 
         rbRun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectRadioButton = SPORT_TYPE_RUN;
-                popupWindow.dismiss();
-                ToastUtil.toastShort(getContext(), getResources().getString(R.string.toast_sport_type_run));
+                setTypeSelectAction(SPORT_TYPE_RUN, popupWindow, getResources().getString(R.string.fg_sport_begin_running), getResources().getString(R.string.toast_sport_type_run));
             }
         });
         rbFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectRadioButton = SPORT_TYPE_FOOTER;
-                popupWindow.dismiss();
-                ToastUtil.toastShort(getContext(), getResources().getString(R.string.toast_sport_type_foot));
+                setTypeSelectAction(SPORT_TYPE_FOOTER, popupWindow, getResources().getString(R.string.fg_sport_begin_footer), getResources().getString(R.string.toast_sport_type_foot));
             }
         });
         rbSkiing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectRadioButton = SPORT_TYPE_SKIING;
-                popupWindow.dismiss();
-                ToastUtil.toastShort(getContext(), getResources().getString(R.string.toast_sport_type_skiing));
+                setTypeSelectAction(SPORT_TYPE_SKIING, popupWindow, getResources().getString(R.string.fg_sport_begin_skiing), getResources().getString(R.string.toast_sport_type_skiing));
             }
         });
         rbSwimming.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectRadioButton = SPORT_TYPE_SWIMMING;
-                popupWindow.dismiss();
-                ToastUtil.toastShort(getContext(), getResources().getString(R.string.toast_sport_type_swimming));
+                setTypeSelectAction(SPORT_TYPE_SWIMMING, popupWindow, getResources().getString(R.string.fg_sport_begin_swimming), getResources().getString(R.string.toast_sport_type_swimming));
             }
         });
         rbIndoor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectRadioButton = SPORT_TYPE_INDOOR;
-                popupWindow.dismiss();
-                ToastUtil.toastShort(getContext(), getResources().getString(R.string.toast_sport_type_indoor));
+                setTypeSelectAction(SPORT_TYPE_INDOOR, popupWindow, getResources().getString(R.string.fg_sport_begin_indoor), getResources().getString(R.string.toast_sport_type_indoor));
             }
         });
         rbFree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectRadioButton = SPORT_TYPE_FREE;
-                popupWindow.dismiss();
-                ToastUtil.toastShort(getContext(), getResources().getString(R.string.toast_sport_type_free));
+                setTypeSelectAction(SPORT_TYPE_FREE, popupWindow, getResources().getString(R.string.fg_sport_begin_free), getResources().getString(R.string.toast_sport_type_free));
             }
         });
 
@@ -300,9 +274,20 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     private void setBackgroundAlph(float alph) {
         //  设置其他位置灰色
         WindowManager.LayoutParams lp = getActivity().getWindow().getAttributes();
-        lp.alpha = alph; //0.0-1.0
+        lp.alpha = alph;
         getActivity().getWindow().setAttributes(lp);
     }
 
+    //1.选择的type，2、pop 3、开始按钮的text 4、吐司string
+    private void setTypeSelectAction(int setSelectRB, PopupWindow popupWindow, String btStartText, String toastString) {
+        selectRadioButton = setSelectRB;
+        //设置主activity的导航图片
+        ((MainActivity) getActivity()).setNavigationImg(setSelectRB);
+        //设置选择类型的图片
+        //imgSportType.setImageDrawable();
+        popupWindow.dismiss();
+        btStart.setText(btStartText);
+        ToastUtil.toastShort(getContext(), toastString);
+    }
 
 }
