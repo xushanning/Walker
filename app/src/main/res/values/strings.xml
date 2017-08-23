@@ -70,5 +70,23 @@
     <string name="a_sport_map_tool_box">工具箱</string>
     <string name="a_sport_map_location">定位</string>
     <string name="a_sport_map_teammate_location">队友位置</string>
+
+    <!--运动选择popupwindow-->
+    <string name="pop_sport_type_bike">骑车</string>
+    <string name="pop_sport_type_run">跑步</string>
+    <string name="pop_sport_type_foot">徒步</string>
+    <string name="pop_sport_type_skiing">滑雪</string>
+    <string name="pop_sport_type_swimming">游泳</string>
+    <string name="pop_sport_type_indoor">室内训练</string>
+    <string name="pop_sport_type_free">自由行</string>
+
+    <!--吐司-->
+    <string name="toast_sport_type_bike">当前为骑车模式</string>
+    <string name="toast_sport_type_run">当前为跑步模式</string>
+    <string name="toast_sport_type_foot">当前为徒步模式</string>
+    <string name="toast_sport_type_skiing">当前为滑雪模式</string>
+    <string name="toast_sport_type_swimming">当前为游泳模式</string>
+    <string name="toast_sport_type_indoor">当前为室内训练模式</string>
+    <string name="toast_sport_type_free">当前为自由行模式</string>
 </resources>
 

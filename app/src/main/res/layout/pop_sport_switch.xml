@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_sport_switch"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_margin="20dp"
+    android:background="@drawable/sp_currency">
+
+    <View
+        android:id="@+id/view20"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="#DEDFE0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/view21"
+        app:layout_constraintRight_toLeftOf="@+id/view22"
+        app:layout_constraintTop_toTopOf="parent"></View>
+
+    <View
+        android:id="@+id/view21"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="#DEDFE0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/view20"
+        app:layout_constraintTop_toTopOf="parent"></View>
+
+    <View
+        android:id="@+id/view22"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="#DEDFE0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/view20"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></View>
+
+    <View
+        android:id="@+id/view23"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="#DEDFE0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></View>
+
+    <RadioButton
+        android:id="@+id/rb_bike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:drawableTop="@drawable/selector_sport_type_bike"
+        android:gravity="center"
+        android:text="@string/pop_sport_type_bike"
+        android:textColor="@color/pop_sport_switch_color"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toTopOf="@+id/view23"
+        app:layout_constraintLeft_toLeftOf="@+id/view23"
+        app:layout_constraintRight_toLeftOf="@+id/view21"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioButton
+        android:id="@+id/rb_run"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:drawableTop="@drawable/selector_sport_type_run"
+        android:gravity="center"
+        android:text="@string/pop_sport_type_run"
+        android:textColor="@color/pop_sport_switch_color"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/rb_bike"
+        app:layout_constraintLeft_toLeftOf="@+id/view21"
+        app:layout_constraintRight_toLeftOf="@+id/view20"
+        app:layout_constraintTop_toTopOf="@+id/rb_bike" />
+
+    <RadioButton
+        android:id="@+id/rb_footer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:drawableTop="@drawable/selector_sport_type_foot"
+        android:gravity="center"
+
+        android:text="@string/pop_sport_type_foot"
+        android:textColor="@color/pop_sport_switch_color"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/rb_run"
+        app:layout_constraintLeft_toRightOf="@+id/view20"
+        app:layout_constraintRight_toLeftOf="@+id/view22"
+        app:layout_constraintTop_toTopOf="@+id/rb_run" />
+
+    <RadioButton
+        android:id="@+id/rb_skiing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:drawableTop="@drawable/selector_sport_type_skiing"
+        android:gravity="center"
+
+        android:text="@string/pop_sport_type_skiing"
+        android:textColor="@color/pop_sport_switch_color"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/rb_footer"
+        app:layout_constraintLeft_toLeftOf="@+id/view22"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/rb_footer" />
+
+    <RadioButton
+        android:id="@+id/rb_swimming"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:drawableTop="@drawable/selector_sport_type_swimming"
+        android:gravity="center"
+
+        android:text="@string/pop_sport_type_swimming"
+        android:textColor="@color/pop_sport_switch_color"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/view21"
+        app:layout_constraintLeft_toLeftOf="@+id/rb_bike"
+        app:layout_constraintRight_toRightOf="@+id/rb_bike"
+        app:layout_constraintTop_toTopOf="@+id/view23" />
+
+    <RadioButton
+        android:id="@+id/rb_indoor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:drawableTop="@drawable/selector_sport_type_indoor"
+        android:gravity="center"
+        android:text="@string/pop_sport_type_indoor"
+        android:textColor="@color/pop_sport_switch_color"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/rb_swimming"
+        app:layout_constraintLeft_toLeftOf="@+id/rb_run"
+        app:layout_constraintRight_toRightOf="@+id/rb_run"
+        app:layout_constraintTop_toTopOf="@+id/rb_swimming" />
+
+    <RadioButton
+        android:id="@+id/rb_free"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@null"
+        android:drawableTop="@drawable/selector_sport_type_free"
+        android:gravity="center"
+        android:text="@string/pop_sport_type_free"
+        android:textColor="@color/pop_sport_switch_color"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toBottomOf="@+id/rb_indoor"
+        app:layout_constraintLeft_toLeftOf="@+id/rb_footer"
+        app:layout_constraintRight_toRightOf="@+id/rb_footer"
+        app:layout_constraintTop_toTopOf="@+id/rb_indoor" />
+
+
+</android.support.constraint.ConstraintLayout>

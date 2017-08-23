@@ -64,7 +64,7 @@
         app:srcCompat="@mipmap/setting" />
 
     <TextView
-        android:id="@+id/textView19"
+        android:id="@+id/tv_sport_switch"
         android:layout_width="55dp"
         android:layout_height="30dp"
         android:background="@drawable/sp_sports_switch"
@@ -75,25 +75,25 @@
         app:layout_constraintTop_toTopOf="@+id/tv_sport_title" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/img_sport_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/textView19"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_sport_switch"
         app:layout_constraintHorizontal_bias="0.18"
-        app:layout_constraintLeft_toLeftOf="@+id/textView19"
-        app:layout_constraintRight_toRightOf="@+id/textView19"
-        app:layout_constraintTop_toTopOf="@+id/textView19"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_sport_switch"
+        app:layout_constraintRight_toRightOf="@+id/tv_sport_switch"
+        app:layout_constraintTop_toTopOf="@+id/tv_sport_switch"
         app:srcCompat="@mipmap/sports_select" />
 
     <ImageView
         android:id="@+id/imageView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+        app:layout_constraintBottom_toBottomOf="@+id/img_sport_type"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toRightOf="@+id/imageView3"
-        app:layout_constraintRight_toRightOf="@+id/textView19"
-        app:layout_constraintTop_toTopOf="@+id/imageView3"
+        app:layout_constraintLeft_toRightOf="@+id/img_sport_type"
+        app:layout_constraintRight_toRightOf="@+id/tv_sport_switch"
+        app:layout_constraintTop_toTopOf="@+id/img_sport_type"
         app:srcCompat="@mipmap/drop_down" />
 
     <!--</android.support.constraint.ConstraintLayout>-->
