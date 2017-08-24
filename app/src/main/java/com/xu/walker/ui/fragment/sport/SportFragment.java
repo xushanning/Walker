@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -228,44 +229,44 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         rbBike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_BIKE, popupWindow, getResources().getString(R.string.fg_sport_begin_riding), getResources().getString(R.string.toast_sport_type_bike));
+                setTypeSelectAction(SPORT_TYPE_BIKE, popupWindow, getResources().getString(R.string.fg_sport_begin_riding), getResources().getString(R.string.toast_sport_type_bike), R.mipmap.sports_fg_bike_select);
             }
         });
 
         rbRun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_RUN, popupWindow, getResources().getString(R.string.fg_sport_begin_running), getResources().getString(R.string.toast_sport_type_run));
+                setTypeSelectAction(SPORT_TYPE_RUN, popupWindow, getResources().getString(R.string.fg_sport_begin_running), getResources().getString(R.string.toast_sport_type_run), R.mipmap.sports_fg_run_select);
             }
         });
         rbFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_FOOTER, popupWindow, getResources().getString(R.string.fg_sport_begin_footer), getResources().getString(R.string.toast_sport_type_foot));
+                setTypeSelectAction(SPORT_TYPE_FOOTER, popupWindow, getResources().getString(R.string.fg_sport_begin_footer), getResources().getString(R.string.toast_sport_type_foot), R.mipmap.sports_fg_footer_select);
             }
         });
         rbSkiing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_SKIING, popupWindow, getResources().getString(R.string.fg_sport_begin_skiing), getResources().getString(R.string.toast_sport_type_skiing));
+                setTypeSelectAction(SPORT_TYPE_SKIING, popupWindow, getResources().getString(R.string.fg_sport_begin_skiing), getResources().getString(R.string.toast_sport_type_skiing), R.mipmap.sports_fg_skiing_select);
             }
         });
         rbSwimming.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_SWIMMING, popupWindow, getResources().getString(R.string.fg_sport_begin_swimming), getResources().getString(R.string.toast_sport_type_swimming));
+                setTypeSelectAction(SPORT_TYPE_SWIMMING, popupWindow, getResources().getString(R.string.fg_sport_begin_swimming), getResources().getString(R.string.toast_sport_type_swimming), R.mipmap.sports_fg_swimming_select);
             }
         });
         rbIndoor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_INDOOR, popupWindow, getResources().getString(R.string.fg_sport_begin_indoor), getResources().getString(R.string.toast_sport_type_indoor));
+                setTypeSelectAction(SPORT_TYPE_INDOOR, popupWindow, getResources().getString(R.string.fg_sport_begin_indoor), getResources().getString(R.string.toast_sport_type_indoor), R.mipmap.sports_fg_indoor_select);
             }
         });
         rbFree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_FREE, popupWindow, getResources().getString(R.string.fg_sport_begin_free), getResources().getString(R.string.toast_sport_type_free));
+                setTypeSelectAction(SPORT_TYPE_FREE, popupWindow, getResources().getString(R.string.fg_sport_begin_free), getResources().getString(R.string.toast_sport_type_free), R.mipmap.sports_fg_free_select);
             }
         });
 
@@ -279,12 +280,12 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     }
 
     //1.选择的type，2、pop 3、开始按钮的text 4、吐司string
-    private void setTypeSelectAction(int setSelectRB, PopupWindow popupWindow, String btStartText, String toastString) {
+    private void setTypeSelectAction(int setSelectRB, PopupWindow popupWindow, String btStartText, String toastString, int drawable) {
         selectRadioButton = setSelectRB;
         //设置主activity的导航图片
         ((MainActivity) getActivity()).setNavigationImg(setSelectRB);
         //设置选择类型的图片
-        //imgSportType.setImageDrawable();
+        imgSportType.setImageDrawable(ContextCompat.getDrawable(getContext(), drawable));
         popupWindow.dismiss();
         btStart.setText(btStartText);
         ToastUtil.toastShort(getContext(), toastString);

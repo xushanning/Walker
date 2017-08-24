@@ -22,7 +22,7 @@
             style="@style/main_tab_item"
             android:layout_marginTop="3dp"
             android:checked="true"
-            android:drawableTop="@drawable/main_tab_bg_sport"
+            android:drawableTop="@drawable/main_tab_bg_sport_bike"
             android:text="@string/sport" />
 
         <RadioButton

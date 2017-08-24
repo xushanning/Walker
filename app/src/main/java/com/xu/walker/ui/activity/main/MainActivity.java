@@ -5,7 +5,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.xu.walker.R;
@@ -17,6 +19,7 @@ import com.xu.walker.ui.fragment.roadbook.RoadBookFragment;
 import com.xu.walker.ui.fragment.sport.SportFragment;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 //
 //                                  _oo8oo_
@@ -47,6 +50,8 @@ public class MainActivity extends BaseActivity<MainContract.IMainPresenter> impl
 
     @BindView(R.id.radioGroup)
     RadioGroup radioGroup;
+    @BindView(R.id.rb_sport)
+    RadioButton rbSport;
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
 
@@ -191,25 +196,25 @@ public class MainActivity extends BaseActivity<MainContract.IMainPresenter> impl
     public void setNavigationImg(int sportType) {
         switch (sportType) {
             case SportFragment.SPORT_TYPE_BIKE:
-
+                rbSport.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(this, R.drawable.main_tab_bg_sport_bike), null, null);
                 break;
             case SportFragment.SPORT_TYPE_RUN:
-
+                rbSport.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(this, R.drawable.main_tab_bg_sport_run), null, null);
                 break;
             case SportFragment.SPORT_TYPE_FOOTER:
-
+                rbSport.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(this, R.drawable.main_tab_bg_sport_footer), null, null);
                 break;
             case SportFragment.SPORT_TYPE_SKIING:
-
+                rbSport.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(this, R.drawable.main_tab_bg_sport_skiing), null, null);
                 break;
             case SportFragment.SPORT_TYPE_SWIMMING:
-
+                rbSport.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(this, R.drawable.main_tab_bg_sport_swimming), null, null);
                 break;
             case SportFragment.SPORT_TYPE_INDOOR:
-
+                rbSport.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(this, R.drawable.main_tab_bg_sport_indoor), null, null);
                 break;
             case SportFragment.SPORT_TYPE_FREE:
-
+                rbSport.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(this, R.drawable.main_tab_bg_sport_free), null, null);
                 break;
         }
 

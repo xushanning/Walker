@@ -83,7 +83,7 @@
         app:layout_constraintLeft_toLeftOf="@+id/tv_sport_switch"
         app:layout_constraintRight_toRightOf="@+id/tv_sport_switch"
         app:layout_constraintTop_toTopOf="@+id/tv_sport_switch"
-        app:srcCompat="@mipmap/sports_select" />
+        app:srcCompat="@mipmap/sports_fg_bike_select" />
 
     <ImageView
         android:id="@+id/imageView5"
@@ -332,7 +332,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.50277776"
-        tools:layout_editor_absoluteX="193dp"
+        tools:layout_editor_absoluteX="181dp"
         tools:layout_editor_absoluteY="0dp" />
 
 
