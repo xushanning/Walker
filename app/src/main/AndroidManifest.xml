@@ -59,6 +59,8 @@
         <activity android:name=".ui.activity.login.LoginActivity" />
         <activity android:name=".ui.activity.register.RegisterActivity" />
         <activity android:name=".ui.activity.sportmap.SportMapActivity" />
+
+        <service android:name=".service.MainService"></service>
     </application>
 
 </manifest>
