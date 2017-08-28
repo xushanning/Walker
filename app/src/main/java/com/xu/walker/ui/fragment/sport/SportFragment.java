@@ -1,10 +1,15 @@
 package com.xu.walker.ui.fragment.sport;
 
+import android.Manifest;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -17,21 +22,27 @@ import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
 import com.xu.walker.R;
 import com.xu.walker.base.BaseFragment;
+import com.xu.walker.service.MainService;
 import com.xu.walker.ui.activity.main.MainActivity;
 import com.xu.walker.ui.activity.sportmap.SportMapActivity;
 import com.xu.walker.utils.ToastUtil;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * Created by xusn10 on 2017/8/7.
  */
 
-public class SportFragment extends BaseFragment<SportContract.ISportPresenter> implements SportContract.ISportView {
+public class SportFragment extends BaseFragment<SportContract.ISportPresenter> implements SportContract.ISportView, EasyPermissions.PermissionCallbacks {
     @BindView(R.id.img_sport_photograph)
     ImageView imgPhotograph;
     @BindView(R.id.img_sport_setting)
@@ -73,6 +84,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     //当前选中的rb
     private int selectRadioButton = SPORT_TYPE_BIKE;
 
+    private MainService.MyBinder myBinder;
 
     @Override
     public int getLayoutId() {
@@ -93,7 +105,9 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
 
     @Override
     public void initPresenter() {
-
+        //Logger.d("初始化presenter");
+        mPresenter = new SportPresenter();
+        mPresenter.start();
     }
 
     @Override
@@ -106,6 +120,19 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
 
     }
 
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            myBinder = (MainService.MyBinder) iBinder;
+            myBinder.startSport();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };
+
 
     @OnClick({R.id.img_sport_photograph, R.id.img_sport_setting, R.id.bt_sport_start, R.id.bt_sport_map, R.id.tv_sport_switch})
     public void onClick(View view) {
@@ -117,8 +144,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                 ToastUtil.toastShort(getContext(), "设置");
                 break;
             case R.id.bt_sport_start:
-                btStart.setBackgroundColor(Color.parseColor("#E84E40"));
-                btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
+                startSport();
                 break;
             case R.id.bt_sport_map:
                 Intent intent = new Intent(getActivity(), SportMapActivity.class);
@@ -163,6 +189,20 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     @Override
     public void setClimb(float climb) {
 
+    }
+
+    //@AfterPermissionGranted( Manifest.permission.ACCESS_FINE_LOCATION)
+    private void startSport() {
+//        if (EasyPermissions.hasPermissions(this, perms)) {
+//
+//        } else {
+//            EasyPermissions.requestPermissions(this, getString(R.string.camera_and_location_rationale),
+//                    RC_CAMERA_AND_LOCATION, perms);
+//        }
+        Intent bindIntent = new Intent(getContext(), MainService.class);
+        getContext().bindService(bindIntent, connection, Context.BIND_AUTO_CREATE);
+        btStart.setBackgroundColor(Color.parseColor("#E84E40"));
+        btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
     }
 
     public int getStatusBarHeight() {
@@ -291,4 +331,29 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         ToastUtil.toastShort(getContext(), toastString);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.unSubscribeRxBus();
+        if (connection != null) {
+            getContext().unbindService(connection);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int i, List<String> list) {
+
+    }
+
+    @Override
+    public void onPermissionsDenied(int i, List<String> list) {
+
+    }
 }

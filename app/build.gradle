@@ -47,4 +47,5 @@ dependencies {
     compile 'com.amap.api:location:latest.integration'
     compile 'com.amap.api:search:latest.integration'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'pub.devrel:easypermissions:0.4.3'
 }

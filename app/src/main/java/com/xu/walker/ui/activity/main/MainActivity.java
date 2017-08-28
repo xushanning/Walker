@@ -2,7 +2,9 @@ package com.xu.walker.ui.activity.main;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -18,8 +20,11 @@ import com.xu.walker.ui.fragment.personal.PersonalFragment;
 import com.xu.walker.ui.fragment.roadbook.RoadBookFragment;
 import com.xu.walker.ui.fragment.sport.SportFragment;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import pub.devrel.easypermissions.EasyPermissions;
 
 //
 //                                  _oo8oo_
@@ -46,7 +51,7 @@ import butterknife.ButterKnife;
 //
 //                          佛祖保佑         永无bug
 //
-public class MainActivity extends BaseActivity<MainContract.IMainPresenter> implements MainContract.IMainView {
+public class MainActivity extends BaseActivity<MainContract.IMainPresenter> implements MainContract.IMainView{
 
     @BindView(R.id.radioGroup)
     RadioGroup radioGroup;
@@ -245,4 +250,5 @@ public class MainActivity extends BaseActivity<MainContract.IMainPresenter> impl
         }
         return true;
     }
+
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,18 +51,18 @@ public class PersonalFragment extends BaseFragment<PersonalContract.IPersonalPre
     @Override
     public void initView(Bundle savedInstanceState) {
         GradientDrawable gdInfo = (GradientDrawable) tvEditInfo.getBackground();
-        gdInfo.setStroke(2, getResources().getColor(R.color.colorWhite));
-        gdInfo.setColor(getResources().getColor(R.color.colorTransparent));
+        gdInfo.setStroke(2, ContextCompat.getColor(getContext(), R.color.colorWhite));
+        gdInfo.setColor(ContextCompat.getColor(getContext(), R.color.colorTransparent));
         gdInfo.setCornerRadius(8);
 
         GradientDrawable gdGrade = (GradientDrawable) tvGrade.getBackground();
-        gdGrade.setStroke(2, getResources().getColor(R.color.fg_personal_grade_bg));
-        gdGrade.setColor(getResources().getColor(R.color.fg_personal_grade_bg));
+        gdGrade.setStroke(2, ContextCompat.getColor(getContext(), R.color.fg_personal_grade_bg));
+        gdGrade.setColor(ContextCompat.getColor(getContext(), R.color.fg_personal_grade_bg));
         gdGrade.setCornerRadius(40);
 
         GradientDrawable gdAccount = (GradientDrawable) tvAccount.getBackground();
-        gdAccount.setStroke(2, getResources().getColor(R.color.fg_personal_grade_bg));
-        gdAccount.setColor(getResources().getColor(R.color.fg_personal_grade_bg));
+        gdAccount.setStroke(2, ContextCompat.getColor(getContext(), R.color.fg_personal_grade_bg));
+        gdAccount.setColor(ContextCompat.getColor(getContext(), R.color.fg_personal_grade_bg));
         gdAccount.setCornerRadius(40);
     }
 

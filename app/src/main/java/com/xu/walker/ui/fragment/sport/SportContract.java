@@ -32,6 +32,7 @@ public class SportContract {
     }
 
     interface ISportPresenter extends IBasePresenter<ISportView> {
-
+        //注销rxbus
+        void unSubscribeRxBus();
     }
 }
