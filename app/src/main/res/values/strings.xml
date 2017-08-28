@@ -26,6 +26,7 @@
     <string name="fg_sport_begin_free">开始</string>
     <string name="fg_sport_end_sport">结束</string>
     <string name="fg_sport_sport_map">运动地图</string>
+    <string name="fg_sport_sport_location_permission">行者,需要使用您的位置权限</string>
 
     <!--个人中心碎片-->
     <string name="fg_personal_login">立即登录</string>

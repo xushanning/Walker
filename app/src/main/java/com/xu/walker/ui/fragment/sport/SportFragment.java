@@ -22,7 +22,6 @@ import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.orhanobut.logger.Logger;
 import com.xu.walker.R;
 import com.xu.walker.base.BaseFragment;
 import com.xu.walker.service.MainService;
@@ -36,6 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
 /**
@@ -85,6 +85,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     private int selectRadioButton = SPORT_TYPE_BIKE;
 
     private MainService.MyBinder myBinder;
+    private static final int RC_LOCATION = 123;
 
     @Override
     public int getLayoutId() {
@@ -191,18 +192,20 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
 
     }
 
-    //@AfterPermissionGranted( Manifest.permission.ACCESS_FINE_LOCATION)
+    @AfterPermissionGranted(RC_LOCATION)
     private void startSport() {
-//        if (EasyPermissions.hasPermissions(this, perms)) {
-//
-//        } else {
-//            EasyPermissions.requestPermissions(this, getString(R.string.camera_and_location_rationale),
-//                    RC_CAMERA_AND_LOCATION, perms);
-//        }
-        Intent bindIntent = new Intent(getContext(), MainService.class);
-        getContext().bindService(bindIntent, connection, Context.BIND_AUTO_CREATE);
-        btStart.setBackgroundColor(Color.parseColor("#E84E40"));
-        btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
+        //有权限，直接执行
+        if (EasyPermissions.hasPermissions(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            Intent bindIntent = new Intent(getContext(), MainService.class);
+            getContext().bindService(bindIntent, connection, Context.BIND_AUTO_CREATE);
+            btStart.setBackgroundColor(Color.parseColor("#E84E40"));
+            btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
+        } else {
+            //申请权限
+            EasyPermissions.requestPermissions(this, getString(R.string.fg_sport_sport_location_permission),
+                    RC_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+
     }
 
     public int getStatusBarHeight() {
@@ -354,6 +357,13 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
 
     @Override
     public void onPermissionsDenied(int i, List<String> list) {
-
+        //当用户拒绝权限的时候提示
+        if (!EasyPermissions.somePermissionPermanentlyDenied(this, list)) {
+            new AppSettingsDialog.Builder(this)
+                    .setRationale("没有该权限，此应用程序可能无法正常工作。打开应用设置屏幕以修改应用权限")
+                    .setTitle("必需权限")
+                    .build()
+                    .show();
+        }
     }
 }
