@@ -5,13 +5,14 @@ package com.xu.walker.utils;
  */
 
 public class RxEvent {
+    //发送位置信息
     public static final String POST_LOCATION = "location";
+    //发送运动时间
+    public static final String POST_SPORT_TIME = "sport_time";
     String type;
-    Object message;
-
-    public void setMessage(Object message) {
-        this.message = message;
-    }
+    Object message1;
+    Object message2;
+    Object message3;
 
     public String getType() {
         return type;
@@ -21,12 +22,27 @@ public class RxEvent {
         this.type = type;
     }
 
-    public Object getMessage() {
-        return message;
+    public Object getMessage1() {
+        return message1;
     }
 
-    public RxEvent(String type, Object message) {
-        this.type = type;
-        this.message = message;
+    public void setMessage1(Object message1) {
+        this.message1 = message1;
+    }
+
+    public Object getMessage2() {
+        return message2;
+    }
+
+    public void setMessage2(Object message2) {
+        this.message2 = message2;
+    }
+
+    public Object getMessage3() {
+        return message3;
+    }
+
+    public void setMessage3(Object message3) {
+        this.message3 = message3;
     }
 }

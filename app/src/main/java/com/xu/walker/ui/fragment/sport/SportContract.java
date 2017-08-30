@@ -10,10 +10,10 @@ import com.xu.walker.base.IBaseView;
 public class SportContract {
     interface ISportView extends IBaseView {
         //设置速度
-        void setSpeed(float speed);
+        void setSpeed(String speed);
 
         //设置里程
-        void setMileage(float mileage);
+        void setMileage(String mileage);
 
         //设置时间
         void setTime();
@@ -22,13 +22,16 @@ public class SportContract {
         void setAverageSpeed(float averageSpeed);
 
         //设置极速
-        void setMaxSpeed(float maxSpeed);
+        void setMaxSpeed(String maxSpeed);
 
         //设置海拔
-        void setAltitude(float altitude);
+        void setAltitude(String altitude);
 
         //设置爬升高度
-        void setClimb(float climb);
+        void setClimb(String climb);
+
+        //设置title
+        void setTitle(String title);
     }
 
     interface ISportPresenter extends IBasePresenter<ISportView> {

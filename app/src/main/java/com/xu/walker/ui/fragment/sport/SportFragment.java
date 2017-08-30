@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
@@ -51,8 +52,8 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     TextView tvSpeed;
     @BindView(R.id.tv_sport_mileage)
     TextView tvMileage;
-    @BindView(R.id.tv_sport_time)
-    TextView tvTime;
+    @BindView(R.id.ct_sport_time)
+    Chronometer ctSportTime;
     @BindView(R.id.tv_sport_average_speed)
     TextView tvAverageSpeed;
     @BindView(R.id.tv_sport_max_speed)
@@ -73,19 +74,29 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     ImageView imgSportType;
     @BindView(R.id.title_view)
     View titleView;
+    @BindView(R.id.tv_sport_title)
+    TextView tvSportTitle;
+    public static final int SPORT_TYPE_BIKE = 0;
+    public static final int SPORT_TYPE_RUN = 1;
+    public static final int SPORT_TYPE_FOOTER = 2;
+    public static final int SPORT_TYPE_SKIING = 3;
+    public static final int SPORT_TYPE_SWIMMING = 4;
+    public static final int SPORT_TYPE_INDOOR = 5;
+    public static final int SPORT_TYPE_FREE = 6;
 
-    public static final int SPORT_TYPE_BIKE = 1;
-    public static final int SPORT_TYPE_RUN = 2;
-    public static final int SPORT_TYPE_FOOTER = 3;
-    public static final int SPORT_TYPE_SKIING = 4;
-    public static final int SPORT_TYPE_SWIMMING = 5;
-    public static final int SPORT_TYPE_INDOOR = 6;
-    public static final int SPORT_TYPE_FREE = 7;
+
     //当前选中的rb
     private int selectRadioButton = SPORT_TYPE_BIKE;
 
     private MainService.MyBinder myBinder;
     private static final int RC_LOCATION = 123;
+    //默认的定位时间间隔是3s一次
+    private long locationInterval = 3000;
+    private static final int IS_SPORTING = 1;
+    private static final int STOP_SPORTING = 0;
+    //默认停止运动
+    private int sportStatus = STOP_SPORTING;
+
 
     @Override
     public int getLayoutId() {
@@ -125,7 +136,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             myBinder = (MainService.MyBinder) iBinder;
-            myBinder.startSport();
+            myBinder.startSport(locationInterval);
         }
 
         @Override
@@ -152,19 +163,25 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                 startActivity(intent);
                 break;
             case R.id.tv_sport_switch:
-                showPopupWindow();
+                //先判断运动状态
+                if (sportStatus == IS_SPORTING) {
+                    ToastUtil.toastShort(getContext(), getResources().getString(R.string.fg_sport_can_not_choose_type));
+                } else if (sportStatus == STOP_SPORTING) {
+                    showPopupWindow();
+                }
+
                 break;
         }
     }
 
     @Override
-    public void setSpeed(float speed) {
-
+    public void setSpeed(String speed) {
+        tvSpeed.setText(speed);
     }
 
     @Override
-    public void setMileage(float mileage) {
-
+    public void setMileage(String mileage) {
+        tvMileage.setText(mileage);
     }
 
     @Override
@@ -178,28 +195,49 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     }
 
     @Override
-    public void setMaxSpeed(float maxSpeed) {
-
+    public void setMaxSpeed(String maxSpeed) {
+        tvMaxSpeed.setText(maxSpeed);
     }
 
     @Override
-    public void setAltitude(float altitude) {
-
+    public void setAltitude(String altitude) {
+        tvAltitude.setText(altitude);
     }
 
     @Override
-    public void setClimb(float climb) {
+    public void setClimb(String climb) {
+        tvClimb.setText(climb);
+    }
 
+    @Override
+    public void setTitle(String title) {
+        tvSportTitle.setText(title);
     }
 
     @AfterPermissionGranted(RC_LOCATION)
     private void startSport() {
         //有权限，直接执行
         if (EasyPermissions.hasPermissions(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            Intent bindIntent = new Intent(getContext(), MainService.class);
-            getContext().bindService(bindIntent, connection, Context.BIND_AUTO_CREATE);
-            btStart.setBackgroundColor(Color.parseColor("#E84E40"));
-            btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
+            switch (sportStatus) {
+                case IS_SPORTING:
+                    //停止运动
+                    myBinder.stopSport();
+                    btStart.setBackgroundColor(Color.parseColor("#189ADB"));
+                    btStart.setText(getResources().getString(R.string.fg_sport_begin_riding));
+                    ctSportTime.stop();
+                    sportStatus = STOP_SPORTING;
+                    break;
+                case STOP_SPORTING:
+                    Intent bindIntent = new Intent(getContext(), MainService.class);
+                    getContext().bindService(bindIntent, connection, Context.BIND_AUTO_CREATE);
+                    btStart.setBackgroundColor(Color.parseColor("#E84E40"));
+                    btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
+                    //计时
+                    ctSportTime.start();
+                    sportStatus = IS_SPORTING;
+                    break;
+            }
+
         } else {
             //申请权限
             EasyPermissions.requestPermissions(this, getString(R.string.fg_sport_sport_location_permission),
@@ -272,44 +310,44 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         rbBike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_BIKE, popupWindow, getResources().getString(R.string.fg_sport_begin_riding), getResources().getString(R.string.toast_sport_type_bike), R.mipmap.sports_fg_bike_select);
+                setTypeSelectAction(SPORT_TYPE_BIKE, popupWindow, getResources().getString(R.string.fg_sport_begin_riding), getResources().getString(R.string.toast_sport_type_bike), R.mipmap.sports_fg_bike_select, 3000);
             }
         });
 
         rbRun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_RUN, popupWindow, getResources().getString(R.string.fg_sport_begin_running), getResources().getString(R.string.toast_sport_type_run), R.mipmap.sports_fg_run_select);
+                setTypeSelectAction(SPORT_TYPE_RUN, popupWindow, getResources().getString(R.string.fg_sport_begin_running), getResources().getString(R.string.toast_sport_type_run), R.mipmap.sports_fg_run_select, 5000);
             }
         });
         rbFooter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_FOOTER, popupWindow, getResources().getString(R.string.fg_sport_begin_footer), getResources().getString(R.string.toast_sport_type_foot), R.mipmap.sports_fg_footer_select);
+                setTypeSelectAction(SPORT_TYPE_FOOTER, popupWindow, getResources().getString(R.string.fg_sport_begin_footer), getResources().getString(R.string.toast_sport_type_foot), R.mipmap.sports_fg_footer_select, 10000);
             }
         });
         rbSkiing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_SKIING, popupWindow, getResources().getString(R.string.fg_sport_begin_skiing), getResources().getString(R.string.toast_sport_type_skiing), R.mipmap.sports_fg_skiing_select);
+                setTypeSelectAction(SPORT_TYPE_SKIING, popupWindow, getResources().getString(R.string.fg_sport_begin_skiing), getResources().getString(R.string.toast_sport_type_skiing), R.mipmap.sports_fg_skiing_select, 3000);
             }
         });
         rbSwimming.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_SWIMMING, popupWindow, getResources().getString(R.string.fg_sport_begin_swimming), getResources().getString(R.string.toast_sport_type_swimming), R.mipmap.sports_fg_swimming_select);
+                setTypeSelectAction(SPORT_TYPE_SWIMMING, popupWindow, getResources().getString(R.string.fg_sport_begin_swimming), getResources().getString(R.string.toast_sport_type_swimming), R.mipmap.sports_fg_swimming_select, 10000);
             }
         });
         rbIndoor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_INDOOR, popupWindow, getResources().getString(R.string.fg_sport_begin_indoor), getResources().getString(R.string.toast_sport_type_indoor), R.mipmap.sports_fg_indoor_select);
+                setTypeSelectAction(SPORT_TYPE_INDOOR, popupWindow, getResources().getString(R.string.fg_sport_begin_indoor), getResources().getString(R.string.toast_sport_type_indoor), R.mipmap.sports_fg_indoor_select, 10000);
             }
         });
         rbFree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setTypeSelectAction(SPORT_TYPE_FREE, popupWindow, getResources().getString(R.string.fg_sport_begin_free), getResources().getString(R.string.toast_sport_type_free), R.mipmap.sports_fg_free_select);
+                setTypeSelectAction(SPORT_TYPE_FREE, popupWindow, getResources().getString(R.string.fg_sport_begin_free), getResources().getString(R.string.toast_sport_type_free), R.mipmap.sports_fg_free_select, 2000);
             }
         });
 
@@ -322,8 +360,9 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         getActivity().getWindow().setAttributes(lp);
     }
 
-    //1.选择的type，2、pop 3、开始按钮的text 4、吐司string
-    private void setTypeSelectAction(int setSelectRB, PopupWindow popupWindow, String btStartText, String toastString, int drawable) {
+    //1.选择的type，2、pop 3、开始按钮的text 4、吐司string 5、设置图片 6、设置定位时间的间隔
+    private void setTypeSelectAction(int setSelectRB, PopupWindow popupWindow, String btStartText, String toastString, int drawable, long locationInterval) {
+
         selectRadioButton = setSelectRB;
         //设置主activity的导航图片
         ((MainActivity) getActivity()).setNavigationImg(setSelectRB);
@@ -332,6 +371,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         popupWindow.dismiss();
         btStart.setText(btStartText);
         ToastUtil.toastShort(getContext(), toastString);
+        this.locationInterval = locationInterval;
     }
 
     @Override

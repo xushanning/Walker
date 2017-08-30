@@ -187,16 +187,15 @@
         android:textColor="@color/fg_sport_big"
         android:textSize="35sp"
         android:textStyle="normal|bold"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_sport_time"
+        app:layout_constraintBottom_toBottomOf="@+id/ct_sport_time"
         app:layout_constraintLeft_toLeftOf="@+id/textView12"
         app:layout_constraintRight_toRightOf="@+id/textView12"
-        app:layout_constraintTop_toTopOf="@+id/tv_sport_time" />
+        app:layout_constraintTop_toTopOf="@+id/ct_sport_time" />
 
-    <TextView
-        android:id="@+id/tv_sport_time"
+    <Chronometer
+        android:id="@+id/ct_sport_time"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="00:00"
+        android:layout_height="48dp"
         android:textColor="@color/fg_sport_big"
         android:textSize="35sp"
         android:textStyle="normal|bold"
@@ -212,10 +211,10 @@
         android:textColor="@color/fg_sport_big"
         android:textSize="35sp"
         android:textStyle="normal|bold"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_sport_time"
+        app:layout_constraintBottom_toBottomOf="@+id/ct_sport_time"
         app:layout_constraintLeft_toLeftOf="@+id/textView14"
         app:layout_constraintRight_toRightOf="@+id/textView14"
-        app:layout_constraintTop_toTopOf="@+id/tv_sport_time" />
+        app:layout_constraintTop_toTopOf="@+id/ct_sport_time" />
 
     <TextView
         android:id="@+id/textView5"
@@ -225,7 +224,7 @@
         android:background="@color/fg_sport_line"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_sport_time" />
+        app:layout_constraintTop_toBottomOf="@+id/ct_sport_time" />
 
     <TextView
         android:id="@+id/textView6"
@@ -332,7 +331,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.50277776"
-        tools:layout_editor_absoluteX="181dp"
+        tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp" />
 
 

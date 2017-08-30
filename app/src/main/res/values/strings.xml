@@ -27,6 +27,9 @@
     <string name="fg_sport_end_sport">结束</string>
     <string name="fg_sport_sport_map">运动地图</string>
     <string name="fg_sport_sport_location_permission">行者,需要使用您的位置权限</string>
+    <string name="fg_sport_is_sporting">正在运动</string>
+    <string name="fg_sport_auto_suspend">自动暂停</string>
+    <string name="fg_sport_can_not_choose_type">运动已经开始,清结束运动后再修改</string>
 
     <!--个人中心碎片-->
     <string name="fg_personal_login">立即登录</string>

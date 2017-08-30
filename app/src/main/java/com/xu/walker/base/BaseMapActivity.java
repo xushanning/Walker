@@ -46,7 +46,9 @@ public class BaseMapActivity<T extends IBasePresenter> extends BaseActivity<T> {
     protected void onDestroy() {
         super.onDestroy();
         //在activity执行onDestroy时执行mMapView.onDestroy()，销毁地图
-        mMapView.onDestroy();
+        if (mMapView != null) {
+            mMapView.onDestroy();
+        }
     }
 
     @Override
