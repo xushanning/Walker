@@ -16,7 +16,7 @@ public class SportContract {
         void setMileage(String mileage);
 
         //设置时间
-        void setTime();
+        void setTime(String time);
 
         //设置均速
         void setAverageSpeed(float averageSpeed);

@@ -56,6 +56,9 @@ public class SportMapPresenter implements SportMapContract.ISportMapPresenter {
                     }
 
                     Logger.d("地图从service中获取到的经纬度:" + latLng.latitude + "  " + latLng.longitude);
+                } else if (rxEvent.getType().equals(RxEvent.POST_SPORT_TIME)) {
+                    String time = (String) rxEvent.getMessage1();
+                    sportMapView.setTime(time);
                 }
             }
         }, new Consumer<Throwable>() {

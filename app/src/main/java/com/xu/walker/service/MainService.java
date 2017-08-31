@@ -32,6 +32,8 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by xusn10 on 2017/8/25.
@@ -57,6 +59,9 @@ public class MainService extends Service implements AMapLocationListener {
     private float totalClimb;
     //上一个记录的海拔
     private double lastAltitude = -1;
+    //记录从运动了多少秒
+    private int recordSecond = 0;
+    private Timer timer;
 
     @Override
     public void onCreate() {
@@ -102,13 +107,61 @@ public class MainService extends Service implements AMapLocationListener {
         }
 
         public void stopSport() {
-
+            //进行数据库操作
+            //停止计时
+            timer.cancel();
         }
     }
 
     private void startTime() {
-        //开始发送时间
-        // RxBus.getInstance().post();
+        timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                recordSecond++;
+                Logger.d(secToTime(recordSecond));
+                RxEvent rxEvent = new RxEvent();
+                rxEvent.setType(RxEvent.POST_SPORT_TIME);
+                rxEvent.setMessage1(secToTime(recordSecond));
+                //开始发送时间
+                RxBus.getInstance().post(rxEvent);
+            }
+        };
+        //从0时刻开始每1秒执行一次
+        timer.schedule(timerTask, 0, 1000);
+    }
+
+    public String secToTime(int time) {
+        String timeStr;
+        int hour;
+        int minute;
+        int second;
+        if (time <= 0)
+            return "00:00";
+        else {
+            minute = time / 60;
+            if (minute < 60) {
+                second = time % 60;
+                timeStr = unitFormat(minute) + ":" + unitFormat(second);
+            } else {
+                hour = minute / 60;
+                if (hour > 99)
+                    return "99:59:59";
+                minute = minute % 60;
+                second = time - hour * 3600 - minute * 60;
+                timeStr = unitFormat(hour) + ":" + unitFormat(minute) + ":" + unitFormat(second);
+            }
+        }
+        return timeStr;
+    }
+
+    public String unitFormat(int i) {
+        String retStr;
+        if (i >= 0 && i < 10)
+            retStr = "0" + Integer.toString(i);
+        else
+            retStr = "" + i;
+        return retStr;
     }
 
 
@@ -128,10 +181,10 @@ public class MainService extends Service implements AMapLocationListener {
             if (aMapLocation.getErrorCode() == 0) {
                 //模拟回家路线
                 LocationBean.DataBean dataBean = dataBeanList.get(count);
-//                double latitude = dataBean.getLatitude();
-//                double longitude = dataBean.getLongitude();
-                double longitude = aMapLocation.getLongitude();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-                double latitude = aMapLocation.getLatitude();//获取纬度
+                double latitude = dataBean.getLatitude();
+                double longitude = dataBean.getLongitude();
+//                double longitude = aMapLocation.getLongitude();//获取当前定位结果来源，如网络定位结果，详见定位类型表
+//                double latitude = aMapLocation.getLatitude();//获取纬度
                 int satelliteCount = aMapLocation.getSatellites();//获取卫星的个数，用于控制gps信号的强弱
                 double altitude = aMapLocation.getAltitude();//获取海拔高度
                 float bearing = aMapLocation.getBearing();//获取方向角

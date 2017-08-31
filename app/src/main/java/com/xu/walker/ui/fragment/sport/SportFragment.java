@@ -52,8 +52,8 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     TextView tvSpeed;
     @BindView(R.id.tv_sport_mileage)
     TextView tvMileage;
-    @BindView(R.id.ct_sport_time)
-    Chronometer ctSportTime;
+    @BindView(R.id.tv_sport_time)
+    TextView tvSportTime;
     @BindView(R.id.tv_sport_average_speed)
     TextView tvAverageSpeed;
     @BindView(R.id.tv_sport_max_speed)
@@ -185,8 +185,8 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     }
 
     @Override
-    public void setTime() {
-
+    public void setTime(String time) {
+        tvSportTime.setText(time);
     }
 
     @Override
@@ -224,7 +224,6 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                     myBinder.stopSport();
                     btStart.setBackgroundColor(Color.parseColor("#189ADB"));
                     btStart.setText(getResources().getString(R.string.fg_sport_begin_riding));
-                    ctSportTime.stop();
                     sportStatus = STOP_SPORTING;
                     break;
                 case STOP_SPORTING:
@@ -233,7 +232,6 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                     btStart.setBackgroundColor(Color.parseColor("#E84E40"));
                     btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
                     //计时
-                    ctSportTime.start();
                     sportStatus = IS_SPORTING;
                     break;
             }

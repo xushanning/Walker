@@ -16,7 +16,6 @@ import com.xu.walker.R;
 import com.xu.walker.base.BaseMapActivity;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class SportMapActivity extends BaseMapActivity<SportMapContract.ISportMapPresenter> implements SportMapContract.ISportMapView {
 
@@ -27,8 +26,8 @@ public class SportMapActivity extends BaseMapActivity<SportMapContract.ISportMap
     TextView tvTotalDistance;
     @BindView(R.id.tv_speed)
     TextView tvSpeed;
-    @BindView(R.id.ct_sport_time)
-    Chronometer ctSportTime;
+    @BindView(R.id.tv_sport_time)
+    TextView tvSportTime;
     private AMap aMap;
     private PolylineOptions polylineOptions;
     private Polyline polyline;
@@ -116,6 +115,11 @@ public class SportMapActivity extends BaseMapActivity<SportMapContract.ISportMap
     @Override
     public void setSpeed(String speed) {
         tvSpeed.setText(speed);
+    }
+
+    @Override
+    public void setTime(String time) {
+        tvSportTime.setText(time);
     }
 
     @Override

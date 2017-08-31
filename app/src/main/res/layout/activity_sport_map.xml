@@ -57,14 +57,14 @@
             android:textSize="24sp"
             android:textStyle="normal|bold"
             app:layout_constraintLeft_toRightOf="@+id/tv_total_distance"
-            app:layout_constraintRight_toLeftOf="@+id/ct_sport_time"
+            app:layout_constraintRight_toLeftOf="@+id/tv_sport_time"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Chronometer
-            android:id="@+id/ct_sport_time"
+        <TextView
+            android:id="@+id/tv_sport_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:format="0:00:00"
+            android:text="00:00"
             android:textColor="@android:color/black"
             android:textSize="24sp"
             android:textStyle="normal|bold"
@@ -106,8 +106,8 @@
             android:textColor="#A2A2A2"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/textView64"
-            app:layout_constraintLeft_toLeftOf="@+id/ct_sport_time"
-            app:layout_constraintRight_toRightOf="@+id/ct_sport_time"
+            app:layout_constraintLeft_toLeftOf="@+id/tv_sport_time"
+            app:layout_constraintRight_toRightOf="@+id/tv_sport_time"
             app:layout_constraintTop_toTopOf="@+id/textView64" />
     </android.support.constraint.ConstraintLayout>
 

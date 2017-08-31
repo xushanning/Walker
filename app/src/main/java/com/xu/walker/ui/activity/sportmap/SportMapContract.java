@@ -22,6 +22,9 @@ public class SportMapContract {
 
         //当前速度
         void setSpeed(String speed);
+
+        //显示运动时间
+        void setTime(String time);
     }
 
     interface ISportMapPresenter extends IBasePresenter<ISportMapView> {

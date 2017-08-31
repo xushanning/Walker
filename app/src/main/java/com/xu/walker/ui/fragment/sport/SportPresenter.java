@@ -60,6 +60,9 @@ public class SportPresenter implements SportContract.ISportPresenter {
                     }
 
                     // Logger.d("运动碎片从service中获取到的经纬度:" + latLonPoint.getLatitude() + "  " + latLonPoint.getLongitude());
+                } else if (rxEvent.getType().equals(RxEvent.POST_SPORT_TIME)) {
+                    String time = (String) rxEvent.getMessage1();
+                    sportView.setTime(time);
                 }
             }
         }, new Consumer<Throwable>() {
