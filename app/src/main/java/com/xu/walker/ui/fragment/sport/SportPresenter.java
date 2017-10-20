@@ -1,16 +1,13 @@
 package com.xu.walker.ui.fragment.sport;
 
 import com.amap.api.maps.model.LatLng;
-import com.amap.api.services.core.LatLonPoint;
 import com.orhanobut.logger.Logger;
-import com.xu.walker.R;
-import com.xu.walker.utils.RxBus;
-import com.xu.walker.utils.RxEvent;
+import com.xu.walker.utils.rx.RxBus;
+import com.xu.walker.utils.rx.RxEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 

@@ -2,10 +2,9 @@ package com.xu.walker.ui.activity.sportmap;
 
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.PolylineOptions;
-import com.amap.api.services.core.LatLonPoint;
 import com.orhanobut.logger.Logger;
-import com.xu.walker.utils.RxBus;
-import com.xu.walker.utils.RxEvent;
+import com.xu.walker.utils.rx.RxBus;
+import com.xu.walker.utils.rx.RxEvent;
 
 import java.util.HashMap;
 import java.util.Map;

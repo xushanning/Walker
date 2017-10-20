@@ -40,7 +40,7 @@ public class MyApplication extends Application {
 
     //初始化数据库
     private void initDatabase() {
-        mHelper = new DaoMaster.DevOpenHelper(this, "riverControllerMVP-db", null);
+        mHelper = new DaoMaster.DevOpenHelper(this, "walker-db", null);
         db = mHelper.getWritableDatabase();
         mDaoMaster = new DaoMaster(db);
         mDaoSession = mDaoMaster.newSession();

@@ -106,7 +106,9 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
 
     @Override
     public void initOthers() {
-
+        Intent bindIntent = new Intent(getContext(), MainService.class);
+        getContext().startService(bindIntent);
+        getContext().bindService(bindIntent, connection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -119,7 +121,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     public void initPresenter() {
         //Logger.d("初始化presenter");
         mPresenter = new SportPresenter();
-        mPresenter.start();
+        // mPresenter.start();
     }
 
     @Override
@@ -136,7 +138,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             myBinder = (MainService.MyBinder) iBinder;
-            myBinder.startSport(locationInterval);
+//            myBinder.startSport(locationInterval);
         }
 
         @Override
@@ -156,6 +158,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                 ToastUtil.toastShort(getContext(), "设置");
                 break;
             case R.id.bt_sport_start:
+                myBinder.checkSportsFrDB();
                 startSport();
                 break;
             case R.id.bt_sport_map:
@@ -227,8 +230,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                     sportStatus = STOP_SPORTING;
                     break;
                 case STOP_SPORTING:
-                    Intent bindIntent = new Intent(getContext(), MainService.class);
-                    getContext().bindService(bindIntent, connection, Context.BIND_AUTO_CREATE);
+
                     btStart.setBackgroundColor(Color.parseColor("#E84E40"));
                     btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
                     //计时
@@ -376,10 +378,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     public void onDestroy() {
         super.onDestroy();
         mPresenter.unSubscribeRxBus();
-        if (connection != null) {
-            getContext().unbindService(connection);
-        }
-
+        getContext().unbindService(connection);
     }
 
     @Override

@@ -15,17 +15,17 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.PolylineOptions;
-import com.amap.api.services.core.LatLonPoint;
-import com.amap.api.services.geocoder.GeocodeSearch;
-import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
+import com.xu.walker.MyApplication;
 import com.xu.walker.R;
 import com.xu.walker.bean.LocationBean;
+import com.xu.walker.db.TrajectoryDBBeanDao;
+import com.xu.walker.db.bean.TrajectoryDBBean;
 import com.xu.walker.simulationdata.SportData;
 import com.xu.walker.ui.activity.main.MainActivity;
-import com.xu.walker.utils.RxBus;
-import com.xu.walker.utils.RxEvent;
+import com.xu.walker.utils.rx.RxBus;
+import com.xu.walker.utils.rx.RxEvent;
 import com.xu.walker.utils.ToastUtil;
 
 import java.text.DecimalFormat;
@@ -97,6 +97,14 @@ public class MainService extends Service implements AMapLocationListener {
     }
 
     public class MyBinder extends Binder {
+        //检测是否有未完成的运动
+        public boolean checkSportsFrDB() {
+            TrajectoryDBBeanDao trajectoryDBBeanDao = MyApplication.getInstances().getDaoSession().getTrajectoryDBBeanDao();
+            //找出是否有未完成的数据
+            List<TrajectoryDBBean> sportsHistoryList = trajectoryDBBeanDao.queryBuilder().where(TrajectoryDBBeanDao.Properties.IsSportsComplete.eq(false)).list();
+            return sportsHistoryList != null && sportsHistoryList.size() != 0;
+        }
+
         public void startSport(long locationInterval) {
             Gson gson = new Gson();
             LocationBean locationBean = gson.fromJson(SportData.sportData, LocationBean.class);

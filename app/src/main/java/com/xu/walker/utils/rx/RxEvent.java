@@ -1,4 +1,4 @@
-package com.xu.walker.utils;
+package com.xu.walker.utils.rx;
 
 /**
  * Created by xusn10 on 2017/8/28.
@@ -9,10 +9,10 @@ public class RxEvent {
     public static final String POST_LOCATION = "location";
     //发送运动时间
     public static final String POST_SPORT_TIME = "sport_time";
-    String type;
-    Object message1;
-    Object message2;
-    Object message3;
+    private String type;
+    private Object message1;
+    private Object message2;
+    private Object message3;
 
     public String getType() {
         return type;

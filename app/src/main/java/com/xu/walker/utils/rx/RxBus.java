@@ -1,4 +1,4 @@
-package com.xu.walker.utils;
+package com.xu.walker.utils.rx;
 
 import java.util.HashMap;
 
