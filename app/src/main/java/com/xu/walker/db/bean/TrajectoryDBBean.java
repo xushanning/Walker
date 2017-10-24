@@ -5,19 +5,24 @@ import com.xu.walker.db.helper.LocationInfoListConverter;
 
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 
 import java.util.List;
 
-import org.greenrobot.greendao.annotation.Generated;
-
 /**
  * Created by xusn10 on 2017/10/20.
+ *
+ * @author 许善宁
  */
 @Entity
 public class TrajectoryDBBean {
     @Id(autoincrement = true)
     private Long id;
+    /**
+     * 轨迹的唯一id
+     */
+    private String trajectoryID;
     //运动是否完成
     private boolean isSportsComplete;
     //运动开始时间
@@ -29,11 +34,12 @@ public class TrajectoryDBBean {
     //定位点信息
     @Convert(columnType = String.class, converter = LocationInfoListConverter.class)
     private List<LocationInfoBean> locationInfoBeans;
-    @Generated(hash = 1554046458)
-    public TrajectoryDBBean(Long id, boolean isSportsComplete, int sportsBeginTime,
-            int sportsEndTime, int sportsTime,
+    @Generated(hash = 1801693551)
+    public TrajectoryDBBean(Long id, String trajectoryID, boolean isSportsComplete,
+            int sportsBeginTime, int sportsEndTime, int sportsTime,
             List<LocationInfoBean> locationInfoBeans) {
         this.id = id;
+        this.trajectoryID = trajectoryID;
         this.isSportsComplete = isSportsComplete;
         this.sportsBeginTime = sportsBeginTime;
         this.sportsEndTime = sportsEndTime;
@@ -48,6 +54,12 @@ public class TrajectoryDBBean {
     }
     public void setId(Long id) {
         this.id = id;
+    }
+    public String getTrajectoryID() {
+        return this.trajectoryID;
+    }
+    public void setTrajectoryID(String trajectoryID) {
+        this.trajectoryID = trajectoryID;
     }
     public boolean getIsSportsComplete() {
         return this.isSportsComplete;
@@ -80,4 +92,5 @@ public class TrajectoryDBBean {
         this.locationInfoBeans = locationInfoBeans;
     }
 
+    
 }

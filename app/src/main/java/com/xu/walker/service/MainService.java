@@ -15,38 +15,39 @@ import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.PolylineOptions;
-import com.google.gson.Gson;
 import com.orhanobut.logger.Logger;
 import com.xu.walker.MyApplication;
 import com.xu.walker.R;
 import com.xu.walker.bean.LocationBean;
 import com.xu.walker.db.TrajectoryDBBeanDao;
 import com.xu.walker.db.bean.TrajectoryDBBean;
-import com.xu.walker.simulationdata.SportData;
 import com.xu.walker.ui.activity.main.MainActivity;
+import com.xu.walker.utils.ToastUtil;
 import com.xu.walker.utils.rx.RxBus;
 import com.xu.walker.utils.rx.RxEvent;
-import com.xu.walker.utils.ToastUtil;
 import com.xu.walker.utils.rx.TransformUtils;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by xusn10 on 2017/8/25.
+ *
+ * @author 许善宁
  */
 
 public class MainService extends Service implements AMapLocationListener {
@@ -58,7 +59,10 @@ public class MainService extends Service implements AMapLocationListener {
     //存点专用
     private PolylineOptions polylineOptions;
     private static final int MINUTE = 60;
-    /* 小时的上限*/
+
+    /**
+     * 小时的上限
+     */
     private static final int HOUR_LIMIT = 99;
     private Disposable mDisposable;
     /**
@@ -89,7 +93,15 @@ public class MainService extends Service implements AMapLocationListener {
      * 记录从运动了多少秒
      */
     private int recordSecond = 0;
-
+    /**
+     * 写入数据库的时间间隔（5s写入一次）
+     */
+    private int insertDBInterval = 5;
+    private TrajectoryDBBeanDao trajectoryDBBeanDao;
+    /**
+     * 当前运动的轨迹的id
+     */
+    private String trajectoryID;
 
     @Override
     public void onCreate() {
@@ -125,11 +137,12 @@ public class MainService extends Service implements AMapLocationListener {
     }
 
     public class MyBinder extends Binder {
+
         public void checkSportsFrDB(final int locationInterval) {
             Observable.create(new ObservableOnSubscribe<List<TrajectoryDBBean>>() {
                 @Override
                 public void subscribe(ObservableEmitter<List<TrajectoryDBBean>> e) throws Exception {
-                    TrajectoryDBBeanDao trajectoryDBBeanDao = MyApplication.getInstances().getDaoSession().getTrajectoryDBBeanDao();
+                    trajectoryDBBeanDao = MyApplication.getInstances().getDaoSession().getTrajectoryDBBeanDao();
                     //找出是否有未完成的数据
                     List<TrajectoryDBBean> sportsHistoryList = trajectoryDBBeanDao.queryBuilder().where(TrajectoryDBBeanDao.Properties.IsSportsComplete.eq(false)).list();
                     e.onNext(sportsHistoryList);
@@ -140,49 +153,73 @@ public class MainService extends Service implements AMapLocationListener {
                 public boolean test(List<TrajectoryDBBean> trajectoryDBBeans) throws Exception {
                     return trajectoryDBBeans != null && trajectoryDBBeans.size() > 0;
                 }
-            }).switchIfEmpty(new Observable<List<TrajectoryDBBean>>() {
-                @Override
-                protected void subscribeActual(Observer<? super List<TrajectoryDBBean>> observer) {
-                    //数据库里没有数据
-                    myBinder.startSport(locationInterval);
-                }
-            }).compose(TransformUtils.<List<TrajectoryDBBean>>defaultSchedulers())
+            }).subscribeOn(AndroidSchedulers.mainThread())
+                    .switchIfEmpty(new Observable<List<TrajectoryDBBean>>() {
+                        @Override
+                        protected void subscribeActual(Observer<? super List<TrajectoryDBBean>> observer) {
+                            //数据库里没有数据，那么切换到主线程开始运动
+                            startSport(locationInterval);
+                        }
+                    })
+                    .compose(TransformUtils.<List<TrajectoryDBBean>>defaultSchedulers())
                     .subscribe(new Consumer<List<TrajectoryDBBean>>() {
                         @Override
                         public void accept(List<TrajectoryDBBean> trajectoryDBBeen) throws Exception {
-
+                            //数据库里有数据，那么通知fragment
                         }
                     });
 
         }
 
-        public void startSport(long locationInterval) {
-            Gson gson = new Gson();
-            LocationBean locationBean = gson.fromJson(SportData.sportData, LocationBean.class);
-            dataBeanList = locationBean.getData();
-            polylineOptions = new PolylineOptions();
-            initLocation(locationInterval);
-            startTime();
-        }
-
+        /**
+         * 停止运动
+         */
         public void stopSport() {
             //进行数据库操作
+            updateTrajectoryData(true);
             //停止计时
             mDisposable.dispose();
+            mLocationClient.stopLocation();
+            trajectoryID = "";
         }
     }
 
-    private void startTime() {
-        Observable.interval(0, 1, TimeUnit.SECONDS)
-                .compose(TransformUtils.<Long>defaultSchedulers())
-                .subscribe(new Observer<Long>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        mDisposable = d;
-                    }
+    /**
+     * 开始运动
+     *
+     * @param locationInterval 定位的间隔
+     */
+    public void startSport(long locationInterval) {
+//        Gson gson = new Gson();
+//        LocationBean locationBean = gson.fromJson(SportData.sportData, LocationBean.class);
+//        dataBeanList = locationBean.getData();
+        polylineOptions = new PolylineOptions();
+        //生成轨迹ID
+        this.trajectoryID = UUID.randomUUID().toString().replaceAll("-", "");
+        createTrajectory();
+        initLocation(locationInterval);
+        startSendData();
+    }
 
+
+    /**
+     * 开始发送数据
+     */
+    private void startSendData() {
+        mDisposable = Observable.interval(0, 1, TimeUnit.SECONDS)
+                .doOnNext(new Consumer<Long>() {
                     @Override
-                    public void onNext(Long value) {
+                    public void accept(Long aLong) throws Exception {
+                        //这里进行写数据库操作(五秒钟写入一次)
+                        if (aLong % insertDBInterval == 0) {
+                            updateTrajectoryData(false);
+                        }
+                    }
+                })
+                .compose(TransformUtils.<Long>defaultSchedulers())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
                         recordSecond++;
                         Logger.d(secToTime(recordSecond));
                         RxEvent rxEvent = new RxEvent();
@@ -191,17 +228,50 @@ public class MainService extends Service implements AMapLocationListener {
                         //开始发送时间
                         RxBus.getInstance().post(rxEvent);
                     }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
                 });
+    }
+
+
+    /**
+     * 更新轨迹数据库
+     */
+    private void updateTrajectoryData(final boolean isComplete) {
+        Observable.create(new ObservableOnSubscribe<Object>() {
+            @Override
+            public void subscribe(ObservableEmitter<Object> observableEmitter) throws Exception {
+                //切换子线程进行数据库操作
+                //查询当前轨迹id的实例
+                TrajectoryDBBean trajectoryDBBean = trajectoryDBBeanDao.queryBuilder().where(TrajectoryDBBeanDao.Properties.TrajectoryID.eq(trajectoryID)).unique();
+                trajectoryDBBean.setIsSportsComplete(isComplete);
+
+
+                trajectoryDBBeanDao.update(trajectoryDBBean);
+                //什么都不发射，完成数据库操作就结束了
+                observableEmitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io()).subscribe();
+    }
+
+    /**
+     * 用于巡河的时候，生成一条轨迹
+     */
+    private void createTrajectory() {
+        Observable.create(new ObservableOnSubscribe<Object>() {
+            @Override
+            public void subscribe(ObservableEmitter<Object> observableEmitter) throws Exception {
+                //切换子线程进行数据库操作
+                TrajectoryDBBean trajectoryDBBean = new TrajectoryDBBean();
+                trajectoryDBBean.setIsSportsComplete(false);
+                trajectoryDBBean.setSportsBeginTime((int) System.currentTimeMillis());
+                trajectoryDBBean.setTrajectoryID(trajectoryID);
+                trajectoryDBBean.setLocationInfoBeans(null);
+                trajectoryDBBeanDao.insert(trajectoryDBBean);
+                //什么都不发射，完成数据库操作就结束了
+                observableEmitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.io()).subscribe();
+
+
     }
 
     public String secToTime(int time) {
@@ -254,12 +324,8 @@ public class MainService extends Service implements AMapLocationListener {
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null) {
             if (aMapLocation.getErrorCode() == 0) {
-                //模拟回家路线
-                LocationBean.DataBean dataBean = dataBeanList.get(count);
-                double latitude = dataBean.getLatitude();
-                double longitude = dataBean.getLongitude();
-//                double longitude = aMapLocation.getLongitude();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-//                double latitude = aMapLocation.getLatitude();//获取纬度
+                double longitude = aMapLocation.getLongitude();//获取当前定位结果来源，如网络定位结果，详见定位类型表
+                double latitude = aMapLocation.getLatitude();//获取纬度
                 int satelliteCount = aMapLocation.getSatellites();//获取卫星的个数，用于控制gps信号的强弱
                 double altitude = aMapLocation.getAltitude();//获取海拔高度
                 float bearing = aMapLocation.getBearing();//获取方向角

@@ -2,6 +2,8 @@ package com.xu.walker.bean;
 
 /**
  * Created by xusn10 on 2017/10/20.
+ *
+ * @author 许善宁
  */
 
 public class LocationInfoBean {
@@ -12,13 +14,23 @@ public class LocationInfoBean {
      * time : 111111
      * altitude : 111.11
      */
-    //经度
+
+    /**
+     * 经度
+     */
     private double longitude;
-    //纬度
+    /**
+     * 纬度
+     */
     private double latitude;
-    //坐标点的时间（时间戳的形式）
+    /**
+     * 坐标点的时间（时间戳的形式）
+     */
     private int time;
-    //海拔
+
+    /**
+     * 海拔
+     */
     private double altitude;
 
     public double getLongitude() {

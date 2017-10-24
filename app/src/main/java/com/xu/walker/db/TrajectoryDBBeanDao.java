@@ -28,11 +28,12 @@ public class TrajectoryDBBeanDao extends AbstractDao<TrajectoryDBBean, Long> {
      */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property IsSportsComplete = new Property(1, boolean.class, "isSportsComplete", false, "IS_SPORTS_COMPLETE");
-        public final static Property SportsBeginTime = new Property(2, int.class, "sportsBeginTime", false, "SPORTS_BEGIN_TIME");
-        public final static Property SportsEndTime = new Property(3, int.class, "sportsEndTime", false, "SPORTS_END_TIME");
-        public final static Property SportsTime = new Property(4, int.class, "sportsTime", false, "SPORTS_TIME");
-        public final static Property LocationInfoBeans = new Property(5, String.class, "locationInfoBeans", false, "LOCATION_INFO_BEANS");
+        public final static Property TrajectoryID = new Property(1, String.class, "trajectoryID", false, "TRAJECTORY_ID");
+        public final static Property IsSportsComplete = new Property(2, boolean.class, "isSportsComplete", false, "IS_SPORTS_COMPLETE");
+        public final static Property SportsBeginTime = new Property(3, int.class, "sportsBeginTime", false, "SPORTS_BEGIN_TIME");
+        public final static Property SportsEndTime = new Property(4, int.class, "sportsEndTime", false, "SPORTS_END_TIME");
+        public final static Property SportsTime = new Property(5, int.class, "sportsTime", false, "SPORTS_TIME");
+        public final static Property LocationInfoBeans = new Property(6, String.class, "locationInfoBeans", false, "LOCATION_INFO_BEANS");
     }
 
     private final LocationInfoListConverter locationInfoBeansConverter = new LocationInfoListConverter();
@@ -50,11 +51,12 @@ public class TrajectoryDBBeanDao extends AbstractDao<TrajectoryDBBean, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"TRAJECTORY_DBBEAN\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
-                "\"IS_SPORTS_COMPLETE\" INTEGER NOT NULL ," + // 1: isSportsComplete
-                "\"SPORTS_BEGIN_TIME\" INTEGER NOT NULL ," + // 2: sportsBeginTime
-                "\"SPORTS_END_TIME\" INTEGER NOT NULL ," + // 3: sportsEndTime
-                "\"SPORTS_TIME\" INTEGER NOT NULL ," + // 4: sportsTime
-                "\"LOCATION_INFO_BEANS\" TEXT);"); // 5: locationInfoBeans
+                "\"TRAJECTORY_ID\" TEXT," + // 1: trajectoryID
+                "\"IS_SPORTS_COMPLETE\" INTEGER NOT NULL ," + // 2: isSportsComplete
+                "\"SPORTS_BEGIN_TIME\" INTEGER NOT NULL ," + // 3: sportsBeginTime
+                "\"SPORTS_END_TIME\" INTEGER NOT NULL ," + // 4: sportsEndTime
+                "\"SPORTS_TIME\" INTEGER NOT NULL ," + // 5: sportsTime
+                "\"LOCATION_INFO_BEANS\" TEXT);"); // 6: locationInfoBeans
     }
 
     /** Drops the underlying database table. */
@@ -71,14 +73,19 @@ public class TrajectoryDBBeanDao extends AbstractDao<TrajectoryDBBean, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
-        stmt.bindLong(2, entity.getIsSportsComplete() ? 1L: 0L);
-        stmt.bindLong(3, entity.getSportsBeginTime());
-        stmt.bindLong(4, entity.getSportsEndTime());
-        stmt.bindLong(5, entity.getSportsTime());
+ 
+        String trajectoryID = entity.getTrajectoryID();
+        if (trajectoryID != null) {
+            stmt.bindString(2, trajectoryID);
+        }
+        stmt.bindLong(3, entity.getIsSportsComplete() ? 1L: 0L);
+        stmt.bindLong(4, entity.getSportsBeginTime());
+        stmt.bindLong(5, entity.getSportsEndTime());
+        stmt.bindLong(6, entity.getSportsTime());
  
         List locationInfoBeans = entity.getLocationInfoBeans();
         if (locationInfoBeans != null) {
-            stmt.bindString(6, locationInfoBeansConverter.convertToDatabaseValue(locationInfoBeans));
+            stmt.bindString(7, locationInfoBeansConverter.convertToDatabaseValue(locationInfoBeans));
         }
     }
 
@@ -90,14 +97,19 @@ public class TrajectoryDBBeanDao extends AbstractDao<TrajectoryDBBean, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
-        stmt.bindLong(2, entity.getIsSportsComplete() ? 1L: 0L);
-        stmt.bindLong(3, entity.getSportsBeginTime());
-        stmt.bindLong(4, entity.getSportsEndTime());
-        stmt.bindLong(5, entity.getSportsTime());
+ 
+        String trajectoryID = entity.getTrajectoryID();
+        if (trajectoryID != null) {
+            stmt.bindString(2, trajectoryID);
+        }
+        stmt.bindLong(3, entity.getIsSportsComplete() ? 1L: 0L);
+        stmt.bindLong(4, entity.getSportsBeginTime());
+        stmt.bindLong(5, entity.getSportsEndTime());
+        stmt.bindLong(6, entity.getSportsTime());
  
         List locationInfoBeans = entity.getLocationInfoBeans();
         if (locationInfoBeans != null) {
-            stmt.bindString(6, locationInfoBeansConverter.convertToDatabaseValue(locationInfoBeans));
+            stmt.bindString(7, locationInfoBeansConverter.convertToDatabaseValue(locationInfoBeans));
         }
     }
 
@@ -110,11 +122,12 @@ public class TrajectoryDBBeanDao extends AbstractDao<TrajectoryDBBean, Long> {
     public TrajectoryDBBean readEntity(Cursor cursor, int offset) {
         TrajectoryDBBean entity = new TrajectoryDBBean( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.getShort(offset + 1) != 0, // isSportsComplete
-            cursor.getInt(offset + 2), // sportsBeginTime
-            cursor.getInt(offset + 3), // sportsEndTime
-            cursor.getInt(offset + 4), // sportsTime
-            cursor.isNull(offset + 5) ? null : locationInfoBeansConverter.convertToEntityProperty(cursor.getString(offset + 5)) // locationInfoBeans
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // trajectoryID
+            cursor.getShort(offset + 2) != 0, // isSportsComplete
+            cursor.getInt(offset + 3), // sportsBeginTime
+            cursor.getInt(offset + 4), // sportsEndTime
+            cursor.getInt(offset + 5), // sportsTime
+            cursor.isNull(offset + 6) ? null : locationInfoBeansConverter.convertToEntityProperty(cursor.getString(offset + 6)) // locationInfoBeans
         );
         return entity;
     }
@@ -122,11 +135,12 @@ public class TrajectoryDBBeanDao extends AbstractDao<TrajectoryDBBean, Long> {
     @Override
     public void readEntity(Cursor cursor, TrajectoryDBBean entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setIsSportsComplete(cursor.getShort(offset + 1) != 0);
-        entity.setSportsBeginTime(cursor.getInt(offset + 2));
-        entity.setSportsEndTime(cursor.getInt(offset + 3));
-        entity.setSportsTime(cursor.getInt(offset + 4));
-        entity.setLocationInfoBeans(cursor.isNull(offset + 5) ? null : locationInfoBeansConverter.convertToEntityProperty(cursor.getString(offset + 5)));
+        entity.setTrajectoryID(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setIsSportsComplete(cursor.getShort(offset + 2) != 0);
+        entity.setSportsBeginTime(cursor.getInt(offset + 3));
+        entity.setSportsEndTime(cursor.getInt(offset + 4));
+        entity.setSportsTime(cursor.getInt(offset + 5));
+        entity.setLocationInfoBeans(cursor.isNull(offset + 6) ? null : locationInfoBeansConverter.convertToEntityProperty(cursor.getString(offset + 6)));
      }
     
     @Override

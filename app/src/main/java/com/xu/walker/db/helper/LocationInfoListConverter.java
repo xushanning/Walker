@@ -19,6 +19,12 @@ public class LocationInfoListConverter implements PropertyConverter<List<Locatio
 
     @Override
     public String convertToDatabaseValue(List<LocationInfoBean> entityProperty) {
-        return null;
+        if (entityProperty == null) {
+            return null;
+        } else {
+
+            return null;
+        }
+
     }
 }
