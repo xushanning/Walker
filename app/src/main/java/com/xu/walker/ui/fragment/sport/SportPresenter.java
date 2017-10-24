@@ -107,34 +107,8 @@ public class SportPresenter implements SportContract.ISportPresenter {
     }
 
     @Override
-    public void checkSportsFrDB(final int locationInterval) {
-        Observable.create(new ObservableOnSubscribe<List<TrajectoryDBBean>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<TrajectoryDBBean>> e) throws Exception {
-                TrajectoryDBBeanDao trajectoryDBBeanDao = MyApplication.getInstances().getDaoSession().getTrajectoryDBBeanDao();
-                //找出是否有未完成的数据
-                List<TrajectoryDBBean> sportsHistoryList = trajectoryDBBeanDao.queryBuilder().where(TrajectoryDBBeanDao.Properties.IsSportsComplete.eq(false)).list();
-                e.onNext(sportsHistoryList);
-                e.onComplete();
-            }
-        }).filter(new Predicate<List<TrajectoryDBBean>>() {
-            @Override
-            public boolean test(List<TrajectoryDBBean> trajectoryDBBeans) throws Exception {
-                return trajectoryDBBeans != null && trajectoryDBBeans.size() > 0;
-            }
-        }).switchIfEmpty(new Observable<List<TrajectoryDBBean>>() {
-            @Override
-            protected void subscribeActual(Observer<? super List<TrajectoryDBBean>> observer) {
-                //数据库里没有数据
-                myBinder.startSport(locationInterval);
-            }
-        }).compose(TransformUtils.<List<TrajectoryDBBean>>defaultSchedulers())
-                .subscribe(new Consumer<List<TrajectoryDBBean>>() {
-                    @Override
-                    public void accept(List<TrajectoryDBBean> trajectoryDBBeen) throws Exception {
-
-                    }
-                });
+    public void checkSportsFrDB(int locationInterval) {
+        myBinder.checkSportsFrDB(locationInterval);
     }
 
     @Override
