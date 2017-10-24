@@ -27,6 +27,7 @@ import com.xu.walker.ui.activity.main.MainActivity;
 import com.xu.walker.utils.rx.RxBus;
 import com.xu.walker.utils.rx.RxEvent;
 import com.xu.walker.utils.ToastUtil;
+import com.xu.walker.utils.rx.TransformUtils;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -34,6 +35,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by xusn10 on 2017/8/25.
@@ -47,21 +54,39 @@ public class MainService extends Service implements AMapLocationListener {
     private int count = 0;
     //存点专用
     private PolylineOptions polylineOptions;
-    //存放运动参数，比如说一些，时速，里程，时间，均速等
+    private static final int MINUTE = 60;
+    /* 小时的上限*/
+    private static final int HOUR_LIMIT = 99;
+    private Disposable mDisposable;
+    /**
+     * 存放运动参数，比如说一些，时速，里程，时间，均速等
+     */
     private Map<String, Object> sportData = new HashMap<>();
-    //上一个点
+    /**
+     * 上一个点
+     */
     private LatLng lastLatLng;
-    //运动距离
+    /**
+     * 运动距离
+     */
     private float totalDistance;
-    //最快速度
+    /**
+     * 最快速度
+     */
     private float maxSpeed;
-    //爬升
+    /**
+     * 爬升
+     */
     private float totalClimb;
-    //上一个记录的海拔
+    /**
+     * 上一个记录的海拔
+     */
     private double lastAltitude = -1;
-    //记录从运动了多少秒
+    /**
+     * 记录从运动了多少秒
+     */
     private int recordSecond = 0;
-    private Timer timer;
+
 
     @Override
     public void onCreate() {
@@ -97,13 +122,7 @@ public class MainService extends Service implements AMapLocationListener {
     }
 
     public class MyBinder extends Binder {
-        //检测是否有未完成的运动
-        public boolean checkSportsFrDB() {
-            TrajectoryDBBeanDao trajectoryDBBeanDao = MyApplication.getInstances().getDaoSession().getTrajectoryDBBeanDao();
-            //找出是否有未完成的数据
-            List<TrajectoryDBBean> sportsHistoryList = trajectoryDBBeanDao.queryBuilder().where(TrajectoryDBBeanDao.Properties.IsSportsComplete.eq(false)).list();
-            return sportsHistoryList != null && sportsHistoryList.size() != 0;
-        }
+
 
         public void startSport(long locationInterval) {
             Gson gson = new Gson();
@@ -117,26 +136,40 @@ public class MainService extends Service implements AMapLocationListener {
         public void stopSport() {
             //进行数据库操作
             //停止计时
-            timer.cancel();
+            mDisposable.dispose();
         }
     }
 
     private void startTime() {
-        timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                recordSecond++;
-                Logger.d(secToTime(recordSecond));
-                RxEvent rxEvent = new RxEvent();
-                rxEvent.setType(RxEvent.POST_SPORT_TIME);
-                rxEvent.setMessage1(secToTime(recordSecond));
-                //开始发送时间
-                RxBus.getInstance().post(rxEvent);
-            }
-        };
-        //从0时刻开始每1秒执行一次
-        timer.schedule(timerTask, 0, 1000);
+        Observable.interval(0, 1, TimeUnit.SECONDS)
+                .compose(TransformUtils.<Long>defaultSchedulers())
+                .subscribe(new Observer<Long>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        mDisposable = d;
+                    }
+
+                    @Override
+                    public void onNext(Long value) {
+                        recordSecond++;
+                        Logger.d(secToTime(recordSecond));
+                        RxEvent rxEvent = new RxEvent();
+                        rxEvent.setType(RxEvent.POST_SPORT_TIME);
+                        rxEvent.setMessage1(secToTime(recordSecond));
+                        //开始发送时间
+                        RxBus.getInstance().post(rxEvent);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     public String secToTime(int time) {
@@ -144,17 +177,18 @@ public class MainService extends Service implements AMapLocationListener {
         int hour;
         int minute;
         int second;
-        if (time <= 0)
+        if (time <= 0) {
             return "00:00";
-        else {
+        } else {
             minute = time / 60;
-            if (minute < 60) {
+            if (minute < MINUTE) {
                 second = time % 60;
                 timeStr = unitFormat(minute) + ":" + unitFormat(second);
             } else {
                 hour = minute / 60;
-                if (hour > 99)
+                if (hour > HOUR_LIMIT) {
                     return "99:59:59";
+                }
                 minute = minute % 60;
                 second = time - hour * 3600 - minute * 60;
                 timeStr = unitFormat(hour) + ":" + unitFormat(minute) + ":" + unitFormat(second);
@@ -165,10 +199,11 @@ public class MainService extends Service implements AMapLocationListener {
 
     public String unitFormat(int i) {
         String retStr;
-        if (i >= 0 && i < 10)
+        if (i >= 0 && i < 10) {
             retStr = "0" + Integer.toString(i);
-        else
+        } else {
             retStr = "" + i;
+        }
         return retStr;
     }
 

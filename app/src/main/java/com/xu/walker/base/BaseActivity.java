@@ -1,6 +1,5 @@
 package com.xu.walker.base;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

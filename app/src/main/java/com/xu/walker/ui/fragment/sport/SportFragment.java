@@ -41,6 +41,8 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * Created by xusn10 on 2017/8/7.
+ *
+ * @author 许善宁
  */
 
 public class SportFragment extends BaseFragment<SportContract.ISportPresenter> implements SportContract.ISportView, EasyPermissions.PermissionCallbacks {
@@ -85,16 +87,22 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     public static final int SPORT_TYPE_FREE = 6;
 
 
-    //当前选中的rb
+    /**
+     * 当前选中的rb
+     */
     private int selectRadioButton = SPORT_TYPE_BIKE;
 
-    private MainService.MyBinder myBinder;
+
     private static final int RC_LOCATION = 123;
-    //默认的定位时间间隔是3s一次
-    private long locationInterval = 3000;
+    /**
+     * 默认的定位时间间隔是3s一次
+     */
+    private int locationInterval = 3000;
     private static final int IS_SPORTING = 1;
     private static final int STOP_SPORTING = 0;
-    //默认停止运动
+    /**
+     * 默认停止运动
+     */
     private int sportStatus = STOP_SPORTING;
 
 
@@ -106,9 +114,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
 
     @Override
     public void initOthers() {
-        Intent bindIntent = new Intent(getContext(), MainService.class);
-        getContext().startService(bindIntent);
-        getContext().bindService(bindIntent, connection, Context.BIND_AUTO_CREATE);
+        mPresenter.bindService(getContext());
     }
 
     @Override
@@ -134,19 +140,6 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
 
     }
 
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            myBinder = (MainService.MyBinder) iBinder;
-//            myBinder.startSport(locationInterval);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-
-        }
-    };
-
 
     @OnClick({R.id.img_sport_photograph, R.id.img_sport_setting, R.id.bt_sport_start, R.id.bt_sport_map, R.id.tv_sport_switch})
     public void onClick(View view) {
@@ -158,7 +151,6 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                 ToastUtil.toastShort(getContext(), "设置");
                 break;
             case R.id.bt_sport_start:
-                myBinder.checkSportsFrDB();
                 startSport();
                 break;
             case R.id.bt_sport_map:
@@ -172,7 +164,8 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                 } else if (sportStatus == STOP_SPORTING) {
                     showPopupWindow();
                 }
-
+                break;
+            default:
                 break;
         }
     }
@@ -217,6 +210,11 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         tvSportTitle.setText(title);
     }
 
+    @Override
+    public void continueSportUI() {
+
+    }
+
     @AfterPermissionGranted(RC_LOCATION)
     private void startSport() {
         //有权限，直接执行
@@ -224,17 +222,19 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
             switch (sportStatus) {
                 case IS_SPORTING:
                     //停止运动
-                    myBinder.stopSport();
+                    mPresenter.stopSport();
                     btStart.setBackgroundColor(Color.parseColor("#189ADB"));
                     btStart.setText(getResources().getString(R.string.fg_sport_begin_riding));
                     sportStatus = STOP_SPORTING;
                     break;
                 case STOP_SPORTING:
-
+                    mPresenter.checkSportsFrDB(locationInterval);
                     btStart.setBackgroundColor(Color.parseColor("#E84E40"));
                     btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
                     //计时
                     sportStatus = IS_SPORTING;
+                    break;
+                default:
                     break;
             }
 
@@ -306,6 +306,8 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
             case SPORT_TYPE_FREE:
                 rbFree.setChecked(true);
                 break;
+            default:
+                break;
         }
         rbBike.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -360,8 +362,16 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         getActivity().getWindow().setAttributes(lp);
     }
 
-    //1.选择的type，2、pop 3、开始按钮的text 4、吐司string 5、设置图片 6、设置定位时间的间隔
-    private void setTypeSelectAction(int setSelectRB, PopupWindow popupWindow, String btStartText, String toastString, int drawable, long locationInterval) {
+
+    /**
+     * @param setSelectRB      选择的type
+     * @param popupWindow      pop
+     * @param btStartText      开始按钮的text
+     * @param toastString      吐司string
+     * @param drawable         设置图片
+     * @param locationInterval 设置定位时间的间隔
+     */
+    private void setTypeSelectAction(int setSelectRB, PopupWindow popupWindow, String btStartText, String toastString, int drawable, int locationInterval) {
 
         selectRadioButton = setSelectRB;
         //设置主activity的导航图片
@@ -378,7 +388,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     public void onDestroy() {
         super.onDestroy();
         mPresenter.unSubscribeRxBus();
-        getContext().unbindService(connection);
+        mPresenter.unBindService(getContext());
     }
 
     @Override

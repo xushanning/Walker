@@ -1,23 +1,47 @@
 package com.xu.walker.ui.fragment.sport;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.amap.api.maps.model.LatLng;
 import com.orhanobut.logger.Logger;
+import com.xu.walker.MyApplication;
+import com.xu.walker.db.TrajectoryDBBeanDao;
+import com.xu.walker.db.bean.TrajectoryDBBean;
+import com.xu.walker.service.MainService;
 import com.xu.walker.utils.rx.RxBus;
 import com.xu.walker.utils.rx.RxEvent;
+import com.xu.walker.utils.rx.TransformUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
+import pub.devrel.easypermissions.AppSettingsDialog;
+import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * Created by xusn10 on 2017/8/7.
+ *
+ * @author xu
  */
 
 public class SportPresenter implements SportContract.ISportPresenter {
     private RxBus rxBus;
     private SportContract.ISportView sportView;
+    private MainService.MyBinder myBinder;
 
     @Override
     public void attachView(SportContract.ISportView view) {
@@ -75,4 +99,68 @@ public class SportPresenter implements SportContract.ISportPresenter {
     public void unSubscribeRxBus() {
         rxBus.unSubscribe(this);
     }
+
+
+    @Override
+    public void stopSport() {
+        myBinder.stopSport();
+    }
+
+    @Override
+    public void checkSportsFrDB(final int locationInterval) {
+        Observable.create(new ObservableOnSubscribe<List<TrajectoryDBBean>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<TrajectoryDBBean>> e) throws Exception {
+                TrajectoryDBBeanDao trajectoryDBBeanDao = MyApplication.getInstances().getDaoSession().getTrajectoryDBBeanDao();
+                //找出是否有未完成的数据
+                List<TrajectoryDBBean> sportsHistoryList = trajectoryDBBeanDao.queryBuilder().where(TrajectoryDBBeanDao.Properties.IsSportsComplete.eq(false)).list();
+                e.onNext(sportsHistoryList);
+                e.onComplete();
+            }
+        }).filter(new Predicate<List<TrajectoryDBBean>>() {
+            @Override
+            public boolean test(List<TrajectoryDBBean> trajectoryDBBeans) throws Exception {
+                return trajectoryDBBeans != null && trajectoryDBBeans.size() > 0;
+            }
+        }).switchIfEmpty(new Observable<List<TrajectoryDBBean>>() {
+            @Override
+            protected void subscribeActual(Observer<? super List<TrajectoryDBBean>> observer) {
+                //数据库里没有数据
+                myBinder.startSport(locationInterval);
+            }
+        }).compose(TransformUtils.<List<TrajectoryDBBean>>defaultSchedulers())
+                .subscribe(new Consumer<List<TrajectoryDBBean>>() {
+                    @Override
+                    public void accept(List<TrajectoryDBBean> trajectoryDBBeen) throws Exception {
+
+                    }
+                });
+    }
+
+    @Override
+    public void bindService(Context context) {
+        Intent bindIntent = new Intent(context, MainService.class);
+        context.startService(bindIntent);
+        context.bindService(bindIntent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            myBinder = (MainService.MyBinder) iBinder;
+//            myBinder.startSport(locationInterval);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };
+
+    @Override
+    public void unBindService(Context context) {
+        context.unbindService(connection);
+    }
+
+
 }

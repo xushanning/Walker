@@ -15,7 +15,7 @@ import io.reactivex.disposables.Disposable;
  * Created by xusn10 on 2017/6/23.
  */
 
-public abstract class HttpResultObserver<T> implements Observer<BaseResBean<T>> {
+public abstract class AbstractHttpResultObserver<T> implements Observer<BaseResBean<T>> {
     protected Context mContext;
     //默认的是加载，如果
     private String defaultShowMsg = "正在加载..";
@@ -26,12 +26,12 @@ public abstract class HttpResultObserver<T> implements Observer<BaseResBean<T>> 
     private static final String WRONG_PASSWORD = "password error.";
     private static final String USER_NOT_FIND = "user not found.";
 
-    public HttpResultObserver(Context mContext, String showMsg) {
+    public AbstractHttpResultObserver(Context mContext, String showMsg) {
         this.mContext = mContext;
         this.defaultShowMsg = showMsg;
     }
 
-    public HttpResultObserver(Context mContext) {
+    public AbstractHttpResultObserver(Context mContext) {
         this.mContext = mContext;
     }
 
