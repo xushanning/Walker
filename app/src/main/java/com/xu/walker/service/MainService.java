@@ -137,6 +137,11 @@ public class MainService extends Service implements AMapLocationListener {
     }
 
     public class MyBinder extends Binder {
+        /**
+         * 检查数据库中是否有未完成的运动轨迹
+         *
+         * @param locationInterval 定位间隔
+         */
 
         public void checkSportsFrDB(final int locationInterval) {
             Observable.create(new ObservableOnSubscribe<List<TrajectoryDBBean>>() {
