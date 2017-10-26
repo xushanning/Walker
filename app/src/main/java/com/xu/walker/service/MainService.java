@@ -37,10 +37,13 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
@@ -96,12 +99,13 @@ public class MainService extends Service implements AMapLocationListener {
     /**
      * 写入数据库的时间间隔（5s写入一次）
      */
-    private int insertDBInterval = 5;
+    private static final int INSERT_DB_INTERVAL = 5;
     private TrajectoryDBBeanDao trajectoryDBBeanDao;
     /**
      * 当前运动的轨迹的id
      */
     private String trajectoryID;
+    private CompositeDisposable compositeDisposable;
 
     @Override
     public void onCreate() {
@@ -119,6 +123,7 @@ public class MainService extends Service implements AMapLocationListener {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        compositeDisposable = new CompositeDisposable();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -133,6 +138,7 @@ public class MainService extends Service implements AMapLocationListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        compositeDisposable.clear();
         Logger.d("service被销毁了");
     }
 
@@ -144,35 +150,39 @@ public class MainService extends Service implements AMapLocationListener {
          */
 
         public void checkSportsFrDB(final int locationInterval) {
-            Observable.create(new ObservableOnSubscribe<List<TrajectoryDBBean>>() {
-                @Override
-                public void subscribe(ObservableEmitter<List<TrajectoryDBBean>> e) throws Exception {
-                    trajectoryDBBeanDao = MyApplication.getInstances().getDaoSession().getTrajectoryDBBeanDao();
-                    //找出是否有未完成的数据
-                    List<TrajectoryDBBean> sportsHistoryList = trajectoryDBBeanDao.queryBuilder().where(TrajectoryDBBeanDao.Properties.IsSportsComplete.eq(false)).list();
-                    e.onNext(sportsHistoryList);
-                    e.onComplete();
-                }
-            }).filter(new Predicate<List<TrajectoryDBBean>>() {
-                @Override
-                public boolean test(List<TrajectoryDBBean> trajectoryDBBeans) throws Exception {
-                    return trajectoryDBBeans != null && trajectoryDBBeans.size() > 0;
-                }
-            }).subscribeOn(AndroidSchedulers.mainThread())
-                    .switchIfEmpty(new Observable<List<TrajectoryDBBean>>() {
+            Disposable checkDbDis =
+                    Observable.create(new ObservableOnSubscribe<List<TrajectoryDBBean>>() {
                         @Override
-                        protected void subscribeActual(Observer<? super List<TrajectoryDBBean>> observer) {
-                            //数据库里没有数据，那么切换到主线程开始运动
-                            startSport(locationInterval);
+                        public void subscribe(ObservableEmitter<List<TrajectoryDBBean>> e) throws Exception {
+                            trajectoryDBBeanDao = MyApplication.getInstances().getDaoSession().getTrajectoryDBBeanDao();
+                            //找出是否有未完成的数据
+                            List<TrajectoryDBBean> sportsHistoryList = trajectoryDBBeanDao.queryBuilder().where(TrajectoryDBBeanDao.Properties.IsSportsComplete.eq(false)).list();
+                            e.onNext(sportsHistoryList);
+                            e.onComplete();
                         }
-                    })
-                    .compose(TransformUtils.<List<TrajectoryDBBean>>defaultSchedulers())
-                    .subscribe(new Consumer<List<TrajectoryDBBean>>() {
+                    }).filter(new Predicate<List<TrajectoryDBBean>>() {
                         @Override
-                        public void accept(List<TrajectoryDBBean> trajectoryDBBeen) throws Exception {
-                            //数据库里有数据，那么通知fragment
+                        public boolean test(List<TrajectoryDBBean> trajectoryDBBeans) throws Exception {
+                            return trajectoryDBBeans != null && trajectoryDBBeans.size() > 0;
                         }
-                    });
+                    }).observeOn(AndroidSchedulers.mainThread())
+                            .switchIfEmpty(new Observable<List<TrajectoryDBBean>>() {
+                                @Override
+                                protected void subscribeActual(Observer<? super List<TrajectoryDBBean>> observer) {
+                                    //数据库里没有数据，那么切换到主线程开始运动
+                                    startSport(locationInterval);
+                                    //结束发送
+                                    observer.onComplete();
+                                }
+                            })
+                            .compose(TransformUtils.<List<TrajectoryDBBean>>defaultSchedulers())
+                            .subscribe(new Consumer<List<TrajectoryDBBean>>() {
+                                @Override
+                                public void accept(List<TrajectoryDBBean> trajectoryDBBeen) throws Exception {
+                                    //数据库里有数据，那么通知fragment
+                                }
+                            });
+            compositeDisposable.add(checkDbDis);
 
         }
 
@@ -216,7 +226,7 @@ public class MainService extends Service implements AMapLocationListener {
                     @Override
                     public void accept(Long aLong) throws Exception {
                         //这里进行写数据库操作(五秒钟写入一次)
-                        if (aLong % insertDBInterval == 0) {
+                        if (aLong % INSERT_DB_INTERVAL == 0) {
                             updateTrajectoryData(false);
                         }
                     }
@@ -234,6 +244,7 @@ public class MainService extends Service implements AMapLocationListener {
                         RxBus.getInstance().post(rxEvent);
                     }
                 });
+        compositeDisposable.add(mDisposable);
     }
 
 

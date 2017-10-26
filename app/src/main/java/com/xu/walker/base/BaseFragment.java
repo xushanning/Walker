@@ -16,6 +16,7 @@ import com.orhanobut.logger.Logger;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * Created by xusn10 on 2017/7/3.
@@ -70,5 +71,7 @@ public abstract class BaseFragment<T extends IBasePresenter> extends Fragment im
             mPresenter.detachView();
         }
         bind.unbind();
+        //中断所有的rx请求
+        mPresenter.disposeAll();
     }
 }

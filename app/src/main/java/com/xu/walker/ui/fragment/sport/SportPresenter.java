@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import com.amap.api.maps.model.LatLng;
 import com.orhanobut.logger.Logger;
 import com.xu.walker.MyApplication;
+import com.xu.walker.base.BasePresenter;
 import com.xu.walker.db.TrajectoryDBBeanDao;
 import com.xu.walker.db.bean.TrajectoryDBBean;
 import com.xu.walker.service.MainService;
@@ -38,7 +39,7 @@ import pub.devrel.easypermissions.EasyPermissions;
  * @author xu
  */
 
-public class SportPresenter implements SportContract.ISportPresenter {
+public class SportPresenter extends BasePresenter implements SportContract.ISportPresenter {
     private RxBus rxBus;
     private SportContract.ISportView sportView;
     private MainService.MyBinder myBinder;
@@ -93,6 +94,12 @@ public class SportPresenter implements SportContract.ISportPresenter {
             }
         });
         RxBus.getInstance().addSubscription(this, disposable);
+        mCompositeDisposable.add(disposable);
+    }
+
+    @Override
+    public void disposeAll() {
+
     }
 
     @Override
