@@ -21,7 +21,7 @@ public class DiscoverPresenter implements DiscoverContract.IDiscoverPresenter {
     }
 
     @Override
-    public void UiDestroy() {
+    public void onUiDestroy() {
 
     }
 }

@@ -84,7 +84,7 @@ public class SportPresenter extends BasePresenter implements SportContract.ISpor
     }
 
     @Override
-    public void UiDestroy() {
+    public void onUiDestroy() {
 
     }
 

@@ -2,6 +2,8 @@ package com.xu.walker.ui.activity.main;
 
 /**
  * Created by xusn10 on 2017/8/7.
+ *
+ * @author 许善宁
  */
 
 public class MainPresenter implements MainContract.IMainPresenter {
@@ -21,7 +23,7 @@ public class MainPresenter implements MainContract.IMainPresenter {
     }
 
     @Override
-    public void UiDestroy() {
+    public void onUiDestroy() {
 
     }
 }

@@ -70,6 +70,6 @@ public abstract class BaseActivity<T extends IBasePresenter> extends AppCompatAc
         }
         bind.unbind();
         //中断所有的rx请求
-        mPresenter.UiDestroy();
+        mPresenter.onUiDestroy();
     }
 }

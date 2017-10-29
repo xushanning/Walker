@@ -14,7 +14,7 @@ public interface IBasePresenter<T extends IBaseView> {
     void start();
 
     /**
-     * 切断所有rx操作
+     * 当activity或者fragement销毁的时候调用
      */
-    void UiDestroy();
+    void onUiDestroy();
 }

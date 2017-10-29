@@ -1,6 +1,6 @@
 package com.xu.walker.db.helper;
 
-import com.xu.walker.bean.LocationInfoBean;
+import com.xu.walker.bean.req.LocationInfoBean;
 
 import org.greenrobot.greendao.converter.PropertyConverter;
 

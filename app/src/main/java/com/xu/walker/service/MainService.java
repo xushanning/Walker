@@ -18,7 +18,7 @@ import com.amap.api.maps.model.PolylineOptions;
 import com.orhanobut.logger.Logger;
 import com.xu.walker.MyApplication;
 import com.xu.walker.R;
-import com.xu.walker.bean.LocationBean;
+import com.xu.walker.bean.req.LocationBean;
 import com.xu.walker.db.TrajectoryDBBeanDao;
 import com.xu.walker.db.bean.TrajectoryDBBean;
 import com.xu.walker.ui.activity.main.MainActivity;

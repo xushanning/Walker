@@ -68,7 +68,7 @@ public abstract class BaseFragment<T extends IBasePresenter> extends Fragment im
             mPresenter.detachView();
         }
         bind.unbind();
-        //中断所有的rx请求
-        mPresenter.UiDestroy();
+        //中断所有的rx请求和其他
+        mPresenter.onUiDestroy();
     }
 }

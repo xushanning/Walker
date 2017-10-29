@@ -21,7 +21,7 @@ public class PersonalPresenter implements PersonalContract.IPersonalPresenter {
     }
 
     @Override
-    public void UiDestroy() {
+    public void onUiDestroy() {
 
     }
 }

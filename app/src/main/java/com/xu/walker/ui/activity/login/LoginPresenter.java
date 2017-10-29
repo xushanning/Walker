@@ -21,7 +21,7 @@ public class LoginPresenter implements LoginContract.ILoginPresenter {
     }
 
     @Override
-    public void UiDestroy() {
+    public void onUiDestroy() {
 
     }
 }

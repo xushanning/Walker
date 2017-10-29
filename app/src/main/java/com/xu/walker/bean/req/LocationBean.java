@@ -1,4 +1,4 @@
-package com.xu.walker.bean;
+package com.xu.walker.bean.req;
 
 import java.util.List;
 

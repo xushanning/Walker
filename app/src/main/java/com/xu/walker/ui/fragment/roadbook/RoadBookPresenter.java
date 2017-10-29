@@ -21,7 +21,7 @@ public class RoadBookPresenter implements RoadBookContract.IRoadBookPresenter {
     }
 
     @Override
-    public void UiDestroy() {
+    public void onUiDestroy() {
 
     }
 }

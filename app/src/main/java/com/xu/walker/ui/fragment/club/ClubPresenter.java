@@ -21,7 +21,7 @@ public class ClubPresenter implements ClubContract.IClubPresenter {
     }
 
     @Override
-    public void UiDestroy() {
+    public void onUiDestroy() {
 
     }
 }

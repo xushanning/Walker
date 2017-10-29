@@ -70,7 +70,7 @@ public class SportMapPresenter implements SportMapContract.ISportMapPresenter {
     }
 
     @Override
-    public void UiDestroy() {
+    public void onUiDestroy() {
 
     }
 

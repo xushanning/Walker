@@ -1,4 +1,4 @@
-package com.xu.walker.bean;
+package com.xu.walker.bean.req;
 
 /**
  * Created by xusn10 on 2017/10/20.

@@ -21,7 +21,7 @@ public class RegisterPresenter implements RegisterContract.IRegisterPresenter {
     }
 
     @Override
-    public void UiDestroy() {
+    public void onUiDestroy() {
 
     }
 }

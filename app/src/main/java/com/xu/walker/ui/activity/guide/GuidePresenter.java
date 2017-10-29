@@ -21,7 +21,7 @@ public class GuidePresenter implements GuideContract.IGuidePresenter {
     }
 
     @Override
-    public void UiDestroy() {
+    public void onUiDestroy() {
 
     }
 }
