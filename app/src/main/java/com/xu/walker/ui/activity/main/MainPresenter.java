@@ -19,4 +19,9 @@ public class MainPresenter implements MainContract.IMainPresenter {
     public void start() {
 
     }
+
+    @Override
+    public void UiDestroy() {
+
+    }
 }

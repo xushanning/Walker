@@ -19,4 +19,9 @@ public class ClubPresenter implements ClubContract.IClubPresenter {
     public void start() {
 
     }
+
+    @Override
+    public void UiDestroy() {
+
+    }
 }

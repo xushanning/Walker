@@ -1,11 +1,9 @@
 package com.xu.walker.base;
 
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +14,6 @@ import com.orhanobut.logger.Logger;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * Created by xusn10 on 2017/7/3.
@@ -72,6 +69,6 @@ public abstract class BaseFragment<T extends IBasePresenter> extends Fragment im
         }
         bind.unbind();
         //中断所有的rx请求
-        mPresenter.disposeAll();
+        mPresenter.UiDestroy();
     }
 }

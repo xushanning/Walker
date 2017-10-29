@@ -9,14 +9,13 @@ import android.widget.TextView;
 import com.xu.walker.R;
 import com.xu.walker.base.BaseActivity;
 import com.xu.walker.ui.activity.register.RegisterActivity;
-import com.xu.walker.utils.ToastUtil;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
  * Created by xusn10 on 2017/8/11.
+ *
  * @author xu
  */
 
@@ -68,6 +67,8 @@ public class LoginActivity extends BaseActivity<LoginContract.ILoginPresenter> i
                 startActivity(intent);
                 break;
             case R.id.tv_activity_login_login:
+                break;
+            default:
                 break;
         }
     }

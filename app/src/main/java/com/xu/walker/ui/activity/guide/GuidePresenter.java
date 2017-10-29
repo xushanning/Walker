@@ -19,4 +19,9 @@ public class GuidePresenter implements GuideContract.IGuidePresenter {
     public void start() {
 
     }
+
+    @Override
+    public void UiDestroy() {
+
+    }
 }

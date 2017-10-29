@@ -19,4 +19,9 @@ public class DiscoverPresenter implements DiscoverContract.IDiscoverPresenter {
     public void start() {
 
     }
+
+    @Override
+    public void UiDestroy() {
+
+    }
 }

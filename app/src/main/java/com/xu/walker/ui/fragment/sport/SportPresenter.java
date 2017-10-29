@@ -5,33 +5,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.amap.api.maps.model.LatLng;
 import com.orhanobut.logger.Logger;
-import com.xu.walker.MyApplication;
 import com.xu.walker.base.BasePresenter;
-import com.xu.walker.db.TrajectoryDBBeanDao;
-import com.xu.walker.db.bean.TrajectoryDBBean;
 import com.xu.walker.service.MainService;
 import com.xu.walker.utils.rx.RxBus;
 import com.xu.walker.utils.rx.RxEvent;
-import com.xu.walker.utils.rx.TransformUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Predicate;
-import pub.devrel.easypermissions.AppSettingsDialog;
-import pub.devrel.easypermissions.EasyPermissions;
 
 /**
  * Created by xusn10 on 2017/8/7.
@@ -98,7 +84,7 @@ public class SportPresenter extends BasePresenter implements SportContract.ISpor
     }
 
     @Override
-    public void disposeAll() {
+    public void UiDestroy() {
 
     }
 

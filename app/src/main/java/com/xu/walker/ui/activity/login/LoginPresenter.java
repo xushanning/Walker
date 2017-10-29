@@ -19,4 +19,9 @@ public class LoginPresenter implements LoginContract.ILoginPresenter {
     public void start() {
 
     }
+
+    @Override
+    public void UiDestroy() {
+
+    }
 }

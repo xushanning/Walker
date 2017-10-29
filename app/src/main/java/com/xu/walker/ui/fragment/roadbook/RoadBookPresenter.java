@@ -19,4 +19,9 @@ public class RoadBookPresenter implements RoadBookContract.IRoadBookPresenter {
     public void start() {
 
     }
+
+    @Override
+    public void UiDestroy() {
+
+    }
 }

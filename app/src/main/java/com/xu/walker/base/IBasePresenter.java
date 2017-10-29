@@ -16,5 +16,5 @@ public interface IBasePresenter<T extends IBaseView> {
     /**
      * 切断所有rx操作
      */
-    void disposeAll();
+    void UiDestroy();
 }

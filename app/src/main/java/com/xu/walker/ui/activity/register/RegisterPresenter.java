@@ -19,4 +19,9 @@ public class RegisterPresenter implements RegisterContract.IRegisterPresenter {
     public void start() {
 
     }
+
+    @Override
+    public void UiDestroy() {
+
+    }
 }

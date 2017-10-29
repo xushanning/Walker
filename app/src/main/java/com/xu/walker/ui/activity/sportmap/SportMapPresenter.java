@@ -70,6 +70,11 @@ public class SportMapPresenter implements SportMapContract.ISportMapPresenter {
     }
 
     @Override
+    public void UiDestroy() {
+
+    }
+
+    @Override
     public void unSubscribeRxBus() {
         rxBus.unSubscribe(this);
     }

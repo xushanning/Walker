@@ -19,4 +19,9 @@ public class PersonalPresenter implements PersonalContract.IPersonalPresenter {
     public void start() {
 
     }
+
+    @Override
+    public void UiDestroy() {
+
+    }
 }

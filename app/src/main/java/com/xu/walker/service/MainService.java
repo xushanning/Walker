@@ -37,13 +37,11 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
@@ -59,7 +57,9 @@ public class MainService extends Service implements AMapLocationListener {
     public AMapLocationClient mLocationClient;
     private List<LocationBean.DataBean> dataBeanList;
     private int count = 0;
-    //存点专用
+    /**
+     * 存点专用
+     */
     private PolylineOptions polylineOptions;
     private static final int MINUTE = 60;
 

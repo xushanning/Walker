@@ -10,7 +10,6 @@ import com.orhanobut.logger.Logger;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * Created by xusn10 on 2017/6/9.
@@ -71,6 +70,6 @@ public abstract class BaseActivity<T extends IBasePresenter> extends AppCompatAc
         }
         bind.unbind();
         //中断所有的rx请求
-        mPresenter.disposeAll();
+        mPresenter.UiDestroy();
     }
 }
