@@ -51,7 +51,11 @@ import pub.devrel.easypermissions.EasyPermissions;
 //
 //                          佛祖保佑         永无bug
 //
-public class MainActivity extends BaseActivity<MainContract.IMainPresenter> implements MainContract.IMainView{
+
+/**
+ * @author 许善宁
+ */
+public class MainActivity extends BaseActivity<MainContract.IMainPresenter> implements MainContract.IMainView {
 
     @BindView(R.id.radioGroup)
     RadioGroup radioGroup;
@@ -149,6 +153,8 @@ public class MainActivity extends BaseActivity<MainContract.IMainPresenter> impl
                     mFragmentTransaction.add(R.id.main_frameLayout, mClubFragment);
                 }
                 break;
+            default:
+                break;
         }
         mFragmentTransaction.commit();
     }
@@ -172,6 +178,8 @@ public class MainActivity extends BaseActivity<MainContract.IMainPresenter> impl
                         break;
                     case R.id.rb_club:
                         showFragment(CLUB_FRAGMENT);
+                        break;
+                    default:
                         break;
                 }
             }

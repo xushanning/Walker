@@ -4,13 +4,16 @@ import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.xu.walker.R;
 import com.xu.walker.base.BaseActivity;
 import com.xu.walker.ui.activity.register.RegisterActivity;
+import com.xu.walker.utils.ToastUtil;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
@@ -24,6 +27,10 @@ public class LoginActivity extends BaseActivity<LoginContract.ILoginPresenter> i
     TextView tvLogin;
     @BindView(R.id.tv_login_register)
     TextView tvRegister;
+    @BindView(R.id.tv_user_name)
+    EditText tvUserName;
+    @BindView(R.id.tv_passWord)
+    EditText tvPassWord;
 
     @Override
     public int getLayoutId() {
@@ -32,7 +39,7 @@ public class LoginActivity extends BaseActivity<LoginContract.ILoginPresenter> i
 
     @Override
     public void initPresenter() {
-
+        mPresenter = new LoginPresenter();
     }
 
     @Override
@@ -45,12 +52,12 @@ public class LoginActivity extends BaseActivity<LoginContract.ILoginPresenter> i
 
     @Override
     public void initOthers() {
-
+        mPresenter.start();
     }
 
     @Override
     public void showError(String msg) {
-
+        ToastUtil.toastShort(this, msg);
     }
 
     @Override
@@ -67,9 +74,27 @@ public class LoginActivity extends BaseActivity<LoginContract.ILoginPresenter> i
                 startActivity(intent);
                 break;
             case R.id.tv_activity_login_login:
+                mPresenter.doLogin();
                 break;
             default:
                 break;
         }
     }
+
+    @Override
+    public TextView getUserNameText() {
+        return tvUserName;
+    }
+
+    @Override
+    public TextView getPassWordText() {
+        return tvPassWord;
+    }
+
+    @Override
+    public TextView getLoginText() {
+        return tvLogin;
+    }
+
+
 }

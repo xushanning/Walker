@@ -3,9 +3,11 @@ package com.xu.walker.service;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 
 import com.amap.api.location.AMapLocation;
@@ -106,10 +108,29 @@ public class MainService extends Service implements AMapLocationListener {
      */
     private String trajectoryID;
     private CompositeDisposable compositeDisposable;
+    private PowerManager.WakeLock wakeLock;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        compositeDisposable = new CompositeDisposable();
+        wakeUpCPU();
+        return START_STICKY;
+    }
+
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return myBinder;
+    }
+
+    private void setForefround() {
         Notification.Builder builder = new Notification.Builder(this);
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
@@ -121,25 +142,14 @@ public class MainService extends Service implements AMapLocationListener {
         startForeground(1, notification);
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        compositeDisposable = new CompositeDisposable();
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return myBinder;
-    }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        compositeDisposable.clear();
-        Logger.d("service被销毁了");
+    /**
+     * 保持cpu在锁屏的情况下，依旧处于工作状态
+     */
+    private void wakeUpCPU() {
+        Logger.d("保持cpu唤醒");
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, MainService.class.getName());
+        wakeLock.acquire();
     }
 
     public class MyBinder extends Binder {
@@ -205,6 +215,8 @@ public class MainService extends Service implements AMapLocationListener {
      * @param locationInterval 定位的间隔
      */
     public void startSport(long locationInterval) {
+        //设置前台服务
+        setForefround();
 //        Gson gson = new Gson();
 //        LocationBean locationBean = gson.fromJson(SportData.sportData, LocationBean.class);
 //        dataBeanList = locationBean.getData();
@@ -257,10 +269,9 @@ public class MainService extends Service implements AMapLocationListener {
             public void subscribe(ObservableEmitter<Object> observableEmitter) throws Exception {
                 //切换子线程进行数据库操作
                 //查询当前轨迹id的实例
+                //刚开始就结束了会崩溃
                 TrajectoryDBBean trajectoryDBBean = trajectoryDBBeanDao.queryBuilder().where(TrajectoryDBBeanDao.Properties.TrajectoryID.eq(trajectoryID)).unique();
                 trajectoryDBBean.setIsSportsComplete(isComplete);
-
-
                 trajectoryDBBeanDao.update(trajectoryDBBean);
                 //什么都不发射，完成数据库操作就结束了
                 observableEmitter.onComplete();
@@ -386,6 +397,17 @@ public class MainService extends Service implements AMapLocationListener {
                 Logger.d(aMapLocation.getErrorCode());
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (wakeLock != null) {
+            wakeLock.release();
+        }
+        stopForeground(true);
+        compositeDisposable.clear();
+        Logger.d("service被销毁了");
     }
 
 }
