@@ -31,12 +31,18 @@ public class TrajectoryDBBean {
     private int sportsEndTime;
     //运动时间
     private int sportsTime;
+    /**
+     * 运动距离
+     */
+    private int totalDistance;
+    private String sportsType;
     //定位点信息
     @Convert(columnType = String.class, converter = LocationInfoListConverter.class)
     private List<LocationInfoBean> locationInfoBeans;
-    @Generated(hash = 1801693551)
+    @Generated(hash = 1173814084)
     public TrajectoryDBBean(Long id, String trajectoryID, boolean isSportsComplete,
             int sportsBeginTime, int sportsEndTime, int sportsTime,
+            int totalDistance, String sportsType,
             List<LocationInfoBean> locationInfoBeans) {
         this.id = id;
         this.trajectoryID = trajectoryID;
@@ -44,6 +50,8 @@ public class TrajectoryDBBean {
         this.sportsBeginTime = sportsBeginTime;
         this.sportsEndTime = sportsEndTime;
         this.sportsTime = sportsTime;
+        this.totalDistance = totalDistance;
+        this.sportsType = sportsType;
         this.locationInfoBeans = locationInfoBeans;
     }
     @Generated(hash = 2124743559)
@@ -85,12 +93,25 @@ public class TrajectoryDBBean {
     public void setSportsTime(int sportsTime) {
         this.sportsTime = sportsTime;
     }
+    public int getTotalDistance() {
+        return this.totalDistance;
+    }
+    public void setTotalDistance(int totalDistance) {
+        this.totalDistance = totalDistance;
+    }
+    public String getSportsType() {
+        return this.sportsType;
+    }
+    public void setSportsType(String sportsType) {
+        this.sportsType = sportsType;
+    }
     public List<LocationInfoBean> getLocationInfoBeans() {
         return this.locationInfoBeans;
     }
     public void setLocationInfoBeans(List<LocationInfoBean> locationInfoBeans) {
         this.locationInfoBeans = locationInfoBeans;
     }
-
     
+ 
+
 }

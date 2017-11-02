@@ -5,10 +5,9 @@ package com.xu.walker.utils.rx;
  */
 
 public class RxEvent {
-    //发送位置信息
-    public static final String POST_LOCATION = "location";
-    //发送运动时间
-    public static final String POST_SPORT_TIME = "sport_time";
+    //发送运动信息
+    public static final String POST_SPORT_INFO = "sport_info";
+    public static final String POST_HAVE_UNCOMPLETE_SPORT = "have_uncomplete_sport";
     private String type;
     private Object message1;
     private Object message2;

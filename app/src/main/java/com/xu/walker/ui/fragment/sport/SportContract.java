@@ -72,8 +72,10 @@ public class SportContract {
 
         /**
          * 变更继续运动的UI
+         *
+         * @param sportDistance 运动距离
          */
-        void continueSportUI();
+        void showContinueSportUI(String sportDistance, String sportTime);
     }
 
     interface ISportPresenter extends IBasePresenter<ISportView> {
@@ -92,8 +94,22 @@ public class SportContract {
          * 从数据库查看是否有未完成的运动
          *
          * @param locationInterval 定位间隔
+         * @param sportType        运动类型
          */
-        void checkSportsFrDB(int locationInterval);
+        void checkSportsFrDB(int locationInterval, String sportType);
+
+        /**
+         * 开始新的运动
+         *
+         * @param sportType        运动类型
+         * @param locationInterval 定位间隔
+         */
+        void reStartSports(int locationInterval, String sportType);
+
+        /**
+         * 继续上一次
+         */
+        void continueSports();
 
         /**
          * 绑定服务

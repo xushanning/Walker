@@ -206,7 +206,7 @@ public class MainActivity extends BaseActivity<MainContract.IMainPresenter> impl
     }
 
     //根据运动的选择，设置导航栏的图片
-    public void setNavigationImg(int sportType) {
+    public void setNavigationImg(String sportType) {
         switch (sportType) {
             case SportFragment.SPORT_TYPE_BIKE:
                 rbSport.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(this, R.drawable.main_tab_bg_sport_bike), null, null);
@@ -228,6 +228,8 @@ public class MainActivity extends BaseActivity<MainContract.IMainPresenter> impl
                 break;
             case SportFragment.SPORT_TYPE_FREE:
                 rbSport.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(this, R.drawable.main_tab_bg_sport_free), null, null);
+                break;
+            default:
                 break;
         }
 

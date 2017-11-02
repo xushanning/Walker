@@ -46,32 +46,42 @@ public class SportPresenter extends BasePresenter implements SportContract.ISpor
         Disposable disposable = rxBus.doSubscribe(RxEvent.class, new Consumer<RxEvent>() {
             @Override
             public void accept(RxEvent rxEvent) throws Exception {
-                if (rxEvent.getType().equals(RxEvent.POST_LOCATION)) {
-                    LatLng latLonPoint = (LatLng) rxEvent.getMessage1();
-                    Map<String, Object> sportData = (HashMap) rxEvent.getMessage3();
-                    //里程
-                    String totalDistance = (String) sportData.get("totalDistance");
-                    String altitude = (String) sportData.get("altitude");
-                    String speed = (String) sportData.get("speed");
-                    String maxSpeed = (String) sportData.get("maxSpeed");
-                    String totalClimb = (String) sportData.get("totalClimb");
+                switch (rxEvent.getType()) {
+                    case RxEvent.POST_SPORT_INFO:
+                        LatLng latLonPoint = (LatLng) rxEvent.getMessage1();
+                        Map<String, Object> sportData = (HashMap) rxEvent.getMessage3();
+                        //里程
+                        String totalDistance = (String) sportData.get("totalDistance");
+                        String altitude = (String) sportData.get("altitude");
+                        String speed = (String) sportData.get("speed");
+                        String maxSpeed = (String) sportData.get("maxSpeed");
+                        String totalClimb = (String) sportData.get("totalClimb");
+                        String sportTime = (String) sportData.get("sportTime");
+                        Logger.d("运动时间" + sportTime);
+                        sportView.setMileage(totalDistance);
+                        sportView.setSpeed(speed);
+                        sportView.setAltitude(altitude);
+                        sportView.setMaxSpeed(maxSpeed);
+                        sportView.setClimb(totalClimb);
+                        sportView.setTime(sportTime);
+                        if (Float.valueOf(speed) == 0) {
+                            sportView.setTitle("自动暂停");
+                        } else {
+                            sportView.setTitle("正在运动");
+                        }
+                        break;
+                    case RxEvent.POST_HAVE_UNCOMPLETE_SPORT:
+                        //有未完成的运动
+                        String unCompleteSportTime = (String) rxEvent.getMessage1();
+                        String unCompleteSportDistance = (String) rxEvent.getMessage2();
 
-                    sportView.setMileage(totalDistance);
-                    sportView.setSpeed(speed);
-                    sportView.setAltitude(altitude);
-                    sportView.setMaxSpeed(maxSpeed);
-                    sportView.setClimb(totalClimb);
-                    if (Float.valueOf(speed) == 0) {
-                        sportView.setTitle("自动暂停");
-                    } else {
-                        sportView.setTitle("正在运动");
-                    }
-
-                    // Logger.d("运动碎片从service中获取到的经纬度:" + latLonPoint.getLatitude() + "  " + latLonPoint.getLongitude());
-                } else if (rxEvent.getType().equals(RxEvent.POST_SPORT_TIME)) {
-                    String time = (String) rxEvent.getMessage1();
-                    sportView.setTime(time);
+                        // String unCompleteSportEndTime = (String) rxEvent.getMessage3();
+                        sportView.showContinueSportUI(unCompleteSportDistance, unCompleteSportTime);
+                        break;
+                    default:
+                        break;
                 }
+
             }
         }, new Consumer<Throwable>() {
             @Override
@@ -100,8 +110,18 @@ public class SportPresenter extends BasePresenter implements SportContract.ISpor
     }
 
     @Override
-    public void checkSportsFrDB(int locationInterval) {
-        myBinder.checkSportsFrDB(locationInterval);
+    public void checkSportsFrDB(int locationInterval, String sportType) {
+        myBinder.checkSportsFrDB(locationInterval, sportType);
+    }
+
+    @Override
+    public void reStartSports(int locationInterval, String sportType) {
+        myBinder.restartSport(locationInterval, sportType);
+    }
+
+    @Override
+    public void continueSports() {
+        myBinder.continueSport();
     }
 
     @Override

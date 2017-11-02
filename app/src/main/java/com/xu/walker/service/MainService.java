@@ -21,6 +21,7 @@ import com.orhanobut.logger.Logger;
 import com.xu.walker.MyApplication;
 import com.xu.walker.R;
 import com.xu.walker.bean.req.LocationBean;
+import com.xu.walker.bean.req.LocationInfoBean;
 import com.xu.walker.db.TrajectoryDBBeanDao;
 import com.xu.walker.db.bean.TrajectoryDBBean;
 import com.xu.walker.ui.activity.main.MainActivity;
@@ -30,6 +31,7 @@ import com.xu.walker.utils.rx.RxEvent;
 import com.xu.walker.utils.rx.TransformUtils;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +60,8 @@ public class MainService extends Service implements AMapLocationListener {
     public AMapLocationClientOption mLocationOption;
     public AMapLocationClient mLocationClient;
     private List<LocationBean.DataBean> dataBeanList;
-    private int count = 0;
+
+
     /**
      * 存点专用
      */
@@ -69,7 +72,10 @@ public class MainService extends Service implements AMapLocationListener {
      * 小时的上限
      */
     private static final int HOUR_LIMIT = 99;
-    private Disposable mDisposable;
+    /**
+     * 发送数据的disposable
+     */
+    private Disposable sendDataDisposable;
     /**
      * 存放运动参数，比如说一些，时速，里程，时间，均速等
      */
@@ -86,6 +92,14 @@ public class MainService extends Service implements AMapLocationListener {
      * 最快速度
      */
     private float maxSpeed;
+    /**
+     * 当前速度
+     */
+    private float currentSpeed;
+    /**
+     * 当前海拔
+     */
+    private double currentAltitude;
     /**
      * 爬升
      */
@@ -109,6 +123,20 @@ public class MainService extends Service implements AMapLocationListener {
     private String trajectoryID;
     private CompositeDisposable compositeDisposable;
     private PowerManager.WakeLock wakeLock;
+
+    /**
+     * 当前位置的经度
+     */
+    private double currentLongitude;
+
+    /**
+     * 当前位置的纬度
+     */
+    private double currentLatitude;
+    /**
+     * 存放定位点信息的list
+     */
+    List<LocationInfoBean> locationInfoBeans;
 
     @Override
     public void onCreate() {
@@ -159,7 +187,7 @@ public class MainService extends Service implements AMapLocationListener {
          * @param locationInterval 定位间隔
          */
 
-        public void checkSportsFrDB(final int locationInterval) {
+        public void checkSportsFrDB(final int locationInterval, final String sportType) {
             Disposable checkDbDis =
                     Observable.create(new ObservableOnSubscribe<List<TrajectoryDBBean>>() {
                         @Override
@@ -180,7 +208,7 @@ public class MainService extends Service implements AMapLocationListener {
                                 @Override
                                 protected void subscribeActual(Observer<? super List<TrajectoryDBBean>> observer) {
                                     //数据库里没有数据，那么切换到主线程开始运动
-                                    startSport(locationInterval);
+                                    startSport(locationInterval, sportType);
                                     //结束发送
                                     observer.onComplete();
                                 }
@@ -190,6 +218,17 @@ public class MainService extends Service implements AMapLocationListener {
                                 @Override
                                 public void accept(List<TrajectoryDBBean> trajectoryDBBeen) throws Exception {
                                     //数据库里有数据，那么通知fragment
+                                    TrajectoryDBBean trajectoryDBBean = trajectoryDBBeen.get(0);
+                                    int sportTime = trajectoryDBBean.getSportsTime();
+                                    int distance = trajectoryDBBean.getTotalDistance();
+                                    //int endTime = trajectoryDBBean.getSportsEndTime();
+                                    RxEvent rxEvent = new RxEvent();
+                                    rxEvent.setType(RxEvent.POST_HAVE_UNCOMPLETE_SPORT);
+                                    rxEvent.setMessage1(secToTime(sportTime));
+                                    rxEvent.setMessage2(new DecimalFormat("##0.00").format(distance / 1000));
+                                    //rxEvent.setMessage3(secToTime(endTime));
+                                    RxBus.getInstance().post(rxEvent);
+                                    Logger.d("数据库里有数据");
                                 }
                             });
             compositeDisposable.add(checkDbDis);
@@ -203,9 +242,25 @@ public class MainService extends Service implements AMapLocationListener {
             //进行数据库操作
             updateTrajectoryData(true);
             //停止计时
-            mDisposable.dispose();
+            sendDataDisposable.dispose();
             mLocationClient.stopLocation();
             trajectoryID = "";
+        }
+
+        /**
+         * 重新开始
+         *
+         * @param locationInterval 定位间隔
+         */
+        public void restartSport(int locationInterval, String sportType) {
+            startSport(locationInterval, sportType);
+        }
+
+        /**
+         * 继续上一次
+         */
+        public void continueSport() {
+
         }
     }
 
@@ -214,16 +269,13 @@ public class MainService extends Service implements AMapLocationListener {
      *
      * @param locationInterval 定位的间隔
      */
-    public void startSport(long locationInterval) {
+    public void startSport(long locationInterval, String sportType) {
         //设置前台服务
         setForefround();
-//        Gson gson = new Gson();
-//        LocationBean locationBean = gson.fromJson(SportData.sportData, LocationBean.class);
-//        dataBeanList = locationBean.getData();
         polylineOptions = new PolylineOptions();
         //生成轨迹ID
         this.trajectoryID = UUID.randomUUID().toString().replaceAll("-", "");
-        createTrajectory();
+        createTrajectory(sportType);
         initLocation(locationInterval);
         startSendData();
     }
@@ -233,7 +285,7 @@ public class MainService extends Service implements AMapLocationListener {
      * 开始发送数据
      */
     private void startSendData() {
-        mDisposable = Observable.interval(0, 1, TimeUnit.SECONDS)
+        sendDataDisposable = Observable.interval(0, 1, TimeUnit.SECONDS)
                 .doOnNext(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
@@ -243,20 +295,29 @@ public class MainService extends Service implements AMapLocationListener {
                         }
                     }
                 })
-                .compose(TransformUtils.<Long>defaultSchedulers())
+                .compose(TransformUtils.<Long>allIo())
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
                         recordSecond++;
-                        Logger.d(secToTime(recordSecond));
+                        //保留小数点
+                        sportData.put("totalDistance", new DecimalFormat("##0.00").format(totalDistance / 1000));
+                        sportData.put("altitude", new DecimalFormat("##0.0").format(currentAltitude));
+                        sportData.put("speed", new DecimalFormat("##0.00").format(currentSpeed));
+                        sportData.put("maxSpeed", new DecimalFormat("##0.00").format(maxSpeed));
+                        sportData.put("totalClimb", new DecimalFormat("##0.0").format(totalClimb));
+                        sportData.put("sportTime", secToTime(recordSecond));
+
                         RxEvent rxEvent = new RxEvent();
-                        rxEvent.setType(RxEvent.POST_SPORT_TIME);
-                        rxEvent.setMessage1(secToTime(recordSecond));
-                        //开始发送时间
+                        rxEvent.setType(RxEvent.POST_SPORT_INFO);
+                        //rxEvent.setMessage1(currentLatLng);
+                        rxEvent.setMessage2(polylineOptions);
+                        rxEvent.setMessage3(sportData);
                         RxBus.getInstance().post(rxEvent);
+
                     }
                 });
-        compositeDisposable.add(mDisposable);
+        compositeDisposable.add(sendDataDisposable);
     }
 
 
@@ -272,6 +333,8 @@ public class MainService extends Service implements AMapLocationListener {
                 //刚开始就结束了会崩溃
                 TrajectoryDBBean trajectoryDBBean = trajectoryDBBeanDao.queryBuilder().where(TrajectoryDBBeanDao.Properties.TrajectoryID.eq(trajectoryID)).unique();
                 trajectoryDBBean.setIsSportsComplete(isComplete);
+                trajectoryDBBean.setSportsTime(recordSecond);
+                trajectoryDBBean.setLocationInfoBeans(locationInfoBeans);
                 trajectoryDBBeanDao.update(trajectoryDBBean);
                 //什么都不发射，完成数据库操作就结束了
                 observableEmitter.onComplete();
@@ -282,7 +345,7 @@ public class MainService extends Service implements AMapLocationListener {
     /**
      * 用于巡河的时候，生成一条轨迹
      */
-    private void createTrajectory() {
+    private void createTrajectory(final String sportType) {
         Observable.create(new ObservableOnSubscribe<Object>() {
             @Override
             public void subscribe(ObservableEmitter<Object> observableEmitter) throws Exception {
@@ -291,7 +354,12 @@ public class MainService extends Service implements AMapLocationListener {
                 trajectoryDBBean.setIsSportsComplete(false);
                 trajectoryDBBean.setSportsBeginTime((int) System.currentTimeMillis());
                 trajectoryDBBean.setTrajectoryID(trajectoryID);
+                trajectoryDBBean.setSportsEndTime(0);
+                //初始化s
+                locationInfoBeans = new ArrayList<>();
                 trajectoryDBBean.setLocationInfoBeans(null);
+                trajectoryDBBean.setSportsTime(0);
+                trajectoryDBBean.setSportsType(sportType);
                 trajectoryDBBeanDao.insert(trajectoryDBBean);
                 //什么都不发射，完成数据库操作就结束了
                 observableEmitter.onComplete();
@@ -351,48 +419,43 @@ public class MainService extends Service implements AMapLocationListener {
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null) {
             if (aMapLocation.getErrorCode() == 0) {
-                double longitude = aMapLocation.getLongitude();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-                double latitude = aMapLocation.getLatitude();//获取纬度
+                //获取当前定位结果来源，如网络定位结果，详见定位类型表
+                currentLongitude = aMapLocation.getLongitude();
+                //获取纬度
+                currentLatitude = aMapLocation.getLatitude();
+                //获取海拔高度
+                currentAltitude = aMapLocation.getAltitude();
+                LocationInfoBean locationInfoBean = new LocationInfoBean();
+                locationInfoBean.setLatitude(currentLatitude);
+                locationInfoBean.setLongitude(currentLongitude);
+                locationInfoBean.setAltitude(currentAltitude);
+                locationInfoBeans.add(locationInfoBean);
+
+
                 int satelliteCount = aMapLocation.getSatellites();//获取卫星的个数，用于控制gps信号的强弱
-                double altitude = aMapLocation.getAltitude();//获取海拔高度
+
                 float bearing = aMapLocation.getBearing();//获取方向角
-                float speed = aMapLocation.getSpeed();//获取速度
-                ToastUtil.toastShort(this, "经纬度:" + latitude + " " + longitude);
-                if (maxSpeed != 0 && speed > maxSpeed) {
-                    maxSpeed = speed;//获取最快速度
+                currentSpeed = aMapLocation.getSpeed();//获取速度
+                ToastUtil.toastShort(this, "经纬度:" + currentLatitude + " " + currentLongitude);
+                if (maxSpeed != 0 && currentSpeed > maxSpeed) {
+                    maxSpeed = currentSpeed;//获取最快速度
                 }
                 if (lastAltitude != -1) {
-                    double climb = altitude - lastAltitude;
-                    lastAltitude = altitude;
+                    double climb = currentAltitude - lastAltitude;
+                    lastAltitude = currentAltitude;
                     totalClimb += climb;
                 }
-                LatLng currentLatLng = new LatLng(latitude, longitude);
+                LatLng currentLatLng = new LatLng(currentLatitude, currentLongitude);
                 if (lastLatLng != null) {
                     float distance = AMapUtils.calculateLineDistance(lastLatLng, currentLatLng);
                     totalDistance += distance;
                 }
                 //如果新的经纬度和上一个经纬度不同的话，进行增加点，如果相同，就不增加
-                if (!currentLatLng.equals(lastLatLng)) {
-                    polylineOptions.add(currentLatLng);
-                }
-                lastLatLng = currentLatLng;
-                DecimalFormat decimalFormat = new DecimalFormat("##0.00");
-                //换算成带两位小数的公里数
-                String kmDistance = decimalFormat.format(totalDistance / 1000);
-                sportData.put("totalDistance", kmDistance);
-                sportData.put("altitude", new DecimalFormat("##0.0").format(altitude));
-                sportData.put("speed", new DecimalFormat("##0.00").format(speed));
-                sportData.put("maxSpeed", new DecimalFormat("##0.00").format(maxSpeed));
-                sportData.put("totalClimb", new DecimalFormat("##0.0").format(totalClimb));
+//                if (!currentLatLng.equals(lastLatLng)) {
+                polylineOptions.add(currentLatLng);
+//                }
+//                lastLatLng = currentLatLng;
 
-
-                RxEvent rxEvent = new RxEvent();
-                rxEvent.setType(RxEvent.POST_LOCATION);
-                rxEvent.setMessage1(currentLatLng);
-                rxEvent.setMessage2(polylineOptions);
-                rxEvent.setMessage3(sportData);
-                RxBus.getInstance().post(rxEvent);
-                count++;
             } else {
                 Logger.d(aMapLocation.getErrorCode());
             }

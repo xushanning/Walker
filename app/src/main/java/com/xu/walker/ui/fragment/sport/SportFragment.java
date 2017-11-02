@@ -1,14 +1,20 @@
 package com.xu.walker.ui.fragment.sport;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.IBinder;
+
+import com.orhanobut.logger.Logger;
+
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
@@ -78,19 +84,19 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     View titleView;
     @BindView(R.id.tv_sport_title)
     TextView tvSportTitle;
-    public static final int SPORT_TYPE_BIKE = 0;
-    public static final int SPORT_TYPE_RUN = 1;
-    public static final int SPORT_TYPE_FOOTER = 2;
-    public static final int SPORT_TYPE_SKIING = 3;
-    public static final int SPORT_TYPE_SWIMMING = 4;
-    public static final int SPORT_TYPE_INDOOR = 5;
-    public static final int SPORT_TYPE_FREE = 6;
+    public static final String SPORT_TYPE_BIKE = "骑行";
+    public static final String SPORT_TYPE_RUN = "跑步";
+    public static final String SPORT_TYPE_FOOTER = "徒步";
+    public static final String SPORT_TYPE_SKIING = "滑雪";
+    public static final String SPORT_TYPE_SWIMMING = "游泳";
+    public static final String SPORT_TYPE_INDOOR = "室内训练";
+    public static final String SPORT_TYPE_FREE = "自由行";
 
 
     /**
-     * 当前选中的rb
+     * 当前选中的rb，默认的是自行车
      */
-    private int selectRadioButton = SPORT_TYPE_BIKE;
+    private String sportType = SPORT_TYPE_BIKE;
 
 
     private static final int RC_LOCATION = 123;
@@ -211,8 +217,31 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     }
 
     @Override
-    public void continueSportUI() {
+    public void showContinueSportUI(String sportDistance, String sportTime) {
+        Logger.d("运动碎片收到");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
+        String message = "你上一次已运动" + sportDistance + "km,用时" + sportTime + ",是否继续?";
+        AlertDialog dialog = builder.setTitle("是否继续")
+                .setMessage(message)
+                .setNegativeButton("继续上次", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+
+                    }
+                })
+                .setPositiveButton("开始新的", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        mPresenter.reStartSports(locationInterval, sportType);
+                    }
+                })
+                .create();
+        dialog.getButton(Dialog.BUTTON_NEGATIVE).setTextColor(Color.parseColor("#8C8C8C"));
+        dialog.getButton(Dialog.BUTTON_POSITIVE).setTextColor(Color.parseColor("#1DA6DD"));
+        dialog.show();
     }
 
     @AfterPermissionGranted(RC_LOCATION)
@@ -228,7 +257,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                     sportStatus = STOP_SPORTING;
                     break;
                 case STOP_SPORTING:
-                    mPresenter.checkSportsFrDB(locationInterval);
+                    mPresenter.checkSportsFrDB(locationInterval, sportType);
                     btStart.setBackgroundColor(Color.parseColor("#E84E40"));
                     btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
                     //计时
@@ -284,7 +313,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         final RadioButton rbSwimming = ButterKnife.findById(view, R.id.rb_swimming);
         final RadioButton rbIndoor = ButterKnife.findById(view, R.id.rb_indoor);
         final RadioButton rbFree = ButterKnife.findById(view, R.id.rb_free);
-        switch (selectRadioButton) {
+        switch (sportType) {
             case SPORT_TYPE_BIKE:
                 rbBike.setChecked(true);
                 break;
@@ -371,9 +400,9 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
      * @param drawable         设置图片
      * @param locationInterval 设置定位时间的间隔
      */
-    private void setTypeSelectAction(int setSelectRB, PopupWindow popupWindow, String btStartText, String toastString, int drawable, int locationInterval) {
+    private void setTypeSelectAction(String setSelectRB, PopupWindow popupWindow, String btStartText, String toastString, int drawable, int locationInterval) {
 
-        selectRadioButton = setSelectRB;
+        sportType = setSelectRB;
         //设置主activity的导航图片
         ((MainActivity) getActivity()).setNavigationImg(setSelectRB);
         //设置选择类型的图片

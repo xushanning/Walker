@@ -39,25 +39,24 @@ public class SportMapPresenter implements SportMapContract.ISportMapPresenter {
         Disposable disposable = rxBus.doSubscribe(RxEvent.class, new Consumer<RxEvent>() {
             @Override
             public void accept(RxEvent rxEvent) throws Exception {
-                if (rxEvent.getType().equals(RxEvent.POST_LOCATION)) {
+                if (rxEvent.getType().equals(RxEvent.POST_SPORT_INFO)) {
                     LatLng latLng = (LatLng) rxEvent.getMessage1();
                     Map<String, Object> sportData = (HashMap) rxEvent.getMessage3();
                     //里程
                     String totalDistance = (String) sportData.get("totalDistance");
                     String speed = (String) sportData.get("speed");
+                    String time = (String) sportData.get("sportTime");
+                    sportMapView.setTime(time);
                     sportMapView.setSpeed(speed);
                     sportMapView.setTotalDistance(totalDistance);
                     //addpoint放在setpolyline方法上面，防止加载重复的点
                     sportMapView.addPoint(latLng);
                     if (isNeedPolylineOptions) {
-                        polylineOptions = (PolylineOptions) rxEvent.getMessage2();
-                        sportMapView.setPolylineOptions(polylineOptions);
+                        //polylineOptions = (PolylineOptions) rxEvent.getMessage2();
+                        //sportMapView.setPolylineOptions(polylineOptions);
                     }
 
                     Logger.d("地图从service中获取到的经纬度:" + latLng.latitude + "  " + latLng.longitude);
-                } else if (rxEvent.getType().equals(RxEvent.POST_SPORT_TIME)) {
-                    String time = (String) rxEvent.getMessage1();
-                    sportMapView.setTime(time);
                 }
             }
         }, new Consumer<Throwable>() {
