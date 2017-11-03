@@ -30,6 +30,7 @@ public class SportPresenter extends BasePresenter implements SportContract.ISpor
     private SportContract.ISportView sportView;
     private MainService.MyBinder myBinder;
 
+
     @Override
     public void attachView(SportContract.ISportView view) {
         this.sportView = view;
@@ -47,9 +48,11 @@ public class SportPresenter extends BasePresenter implements SportContract.ISpor
             @Override
             public void accept(RxEvent rxEvent) throws Exception {
                 switch (rxEvent.getType()) {
+                    //运动信息
                     case RxEvent.POST_SPORT_INFO:
-                        LatLng latLonPoint = (LatLng) rxEvent.getMessage1();
-                        Map<String, Object> sportData = (HashMap) rxEvent.getMessage3();
+
+
+                        Map<String, Object> sportData = (HashMap) rxEvent.getMessage2();
                         //里程
                         String totalDistance = (String) sportData.get("totalDistance");
                         String altitude = (String) sportData.get("altitude");
@@ -57,7 +60,6 @@ public class SportPresenter extends BasePresenter implements SportContract.ISpor
                         String maxSpeed = (String) sportData.get("maxSpeed");
                         String totalClimb = (String) sportData.get("totalClimb");
                         String sportTime = (String) sportData.get("sportTime");
-                        Logger.d("运动时间" + sportTime);
                         sportView.setMileage(totalDistance);
                         sportView.setSpeed(speed);
                         sportView.setAltitude(altitude);
@@ -70,13 +72,17 @@ public class SportPresenter extends BasePresenter implements SportContract.ISpor
                             sportView.setTitle("正在运动");
                         }
                         break;
+                    //有未完成的运动
                     case RxEvent.POST_HAVE_UNCOMPLETE_SPORT:
                         //有未完成的运动
                         String unCompleteSportTime = (String) rxEvent.getMessage1();
                         String unCompleteSportDistance = (String) rxEvent.getMessage2();
-
                         // String unCompleteSportEndTime = (String) rxEvent.getMessage3();
                         sportView.showContinueSportUI(unCompleteSportDistance, unCompleteSportTime);
+                        break;
+                    //变化ui为已经开始
+                    case RxEvent.POST_SPORT_UI_TO_BEGIN:
+                        sportView.changeUiToBeginSport();
                         break;
                     default:
                         break;

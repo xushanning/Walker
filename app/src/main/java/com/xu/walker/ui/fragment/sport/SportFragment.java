@@ -121,6 +121,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     @Override
     public void initOthers() {
         mPresenter.bindService(getContext());
+        mPresenter.start();
     }
 
     @Override
@@ -133,7 +134,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     public void initPresenter() {
         //Logger.d("初始化presenter");
         mPresenter = new SportPresenter();
-        // mPresenter.start();
+        mPresenter.start();
     }
 
     @Override
@@ -222,6 +223,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         String message = "你上一次已运动" + sportDistance + "km,用时" + sportTime + ",是否继续?";
+        Logger.d(message);
         AlertDialog dialog = builder.setTitle("是否继续")
                 .setMessage(message)
                 .setNegativeButton("继续上次", new DialogInterface.OnClickListener() {
@@ -239,9 +241,33 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                     }
                 })
                 .create();
+        dialog.show();
         dialog.getButton(Dialog.BUTTON_NEGATIVE).setTextColor(Color.parseColor("#8C8C8C"));
         dialog.getButton(Dialog.BUTTON_POSITIVE).setTextColor(Color.parseColor("#1DA6DD"));
-        dialog.show();
+
+    }
+
+    @Override
+    public void changeUiToBeginSport() {
+        btStart.setBackgroundColor(Color.parseColor("#E84E40"));
+        btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
+        //计时
+        sportStatus = IS_SPORTING;
+    }
+
+    @Override
+    public void changeUiToStopSport() {
+        btStart.setBackgroundColor(Color.parseColor("#189ADB"));
+        btStart.setText(getResources().getString(R.string.fg_sport_begin_riding));
+        sportStatus = STOP_SPORTING;
+        //初始化tv的值
+        tvSpeed.setText(R.string.fg_sport_init_text_0_00);
+        tvMileage.setText(R.string.fg_sport_init_text_0_00);
+        tvSportTime.setText(R.string.fg_sport_init_text_00_00);
+        tvAverageSpeed.setText(R.string.fg_sport_init_text_0_00);
+        tvMaxSpeed.setText(R.string.fg_sport_init_text_0_00);
+        tvAltitude.setText(R.string.fg_sport_init_text_0_0);
+        tvClimb.setText(R.string.fg_sport_init_text_0_0);
     }
 
     @AfterPermissionGranted(RC_LOCATION)
@@ -252,16 +278,10 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
                 case IS_SPORTING:
                     //停止运动
                     mPresenter.stopSport();
-                    btStart.setBackgroundColor(Color.parseColor("#189ADB"));
-                    btStart.setText(getResources().getString(R.string.fg_sport_begin_riding));
-                    sportStatus = STOP_SPORTING;
+                    changeUiToStopSport();
                     break;
                 case STOP_SPORTING:
                     mPresenter.checkSportsFrDB(locationInterval, sportType);
-                    btStart.setBackgroundColor(Color.parseColor("#E84E40"));
-                    btStart.setText(getResources().getString(R.string.fg_sport_end_sport));
-                    //计时
-                    sportStatus = IS_SPORTING;
                     break;
                 default:
                     break;

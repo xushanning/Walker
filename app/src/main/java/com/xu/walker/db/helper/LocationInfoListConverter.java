@@ -1,5 +1,7 @@
 package com.xu.walker.db.helper;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.xu.walker.bean.req.LocationInfoBean;
 
 import org.greenrobot.greendao.converter.PropertyConverter;
@@ -12,9 +14,17 @@ import java.util.List;
  */
 
 public class LocationInfoListConverter implements PropertyConverter<List<LocationInfoBean>, String> {
+    private Gson gson = new Gson();
+
     @Override
     public List<LocationInfoBean> convertToEntityProperty(String databaseValue) {
-        return null;
+        if (databaseValue == null) {
+            return null;
+        } else {
+            return gson.fromJson(databaseValue, new TypeToken<List<LocationInfoBean>>() {
+            }.getType());
+        }
+
     }
 
     @Override
@@ -23,7 +33,7 @@ public class LocationInfoListConverter implements PropertyConverter<List<Locatio
             return null;
         } else {
 
-            return null;
+            return gson.toJson(entityProperty);
         }
 
     }

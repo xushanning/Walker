@@ -22,6 +22,7 @@ public class SportMapPresenter implements SportMapContract.ISportMapPresenter {
     private PolylineOptions polylineOptions;
     //是否需要初始化PolylineOptions
     private boolean isNeedPolylineOptions = false;
+    private LatLng lastLatLng;
 
     @Override
     public void attachView(SportMapContract.ISportMapView view) {
@@ -40,7 +41,15 @@ public class SportMapPresenter implements SportMapContract.ISportMapPresenter {
             @Override
             public void accept(RxEvent rxEvent) throws Exception {
                 if (rxEvent.getType().equals(RxEvent.POST_SPORT_INFO)) {
-                    LatLng latLng = (LatLng) rxEvent.getMessage1();
+
+                    LatLng currentLatLng = (LatLng) rxEvent.getMessage1();
+                    //判断，如果当前点不为null，并且和上一个点不等的话
+                    if (currentLatLng != null && !currentLatLng.equals(lastLatLng)) {
+                        //追加最新的点到轨迹上去
+                        sportMapView.addPoint(currentLatLng);
+                        lastLatLng = currentLatLng;
+                        Logger.d("地图从service中获取到的经纬度:" + currentLatLng.latitude + "  " + currentLatLng.longitude);
+                    }
                     Map<String, Object> sportData = (HashMap) rxEvent.getMessage3();
                     //里程
                     String totalDistance = (String) sportData.get("totalDistance");
@@ -50,13 +59,13 @@ public class SportMapPresenter implements SportMapContract.ISportMapPresenter {
                     sportMapView.setSpeed(speed);
                     sportMapView.setTotalDistance(totalDistance);
                     //addpoint放在setpolyline方法上面，防止加载重复的点
-                    sportMapView.addPoint(latLng);
+
                     if (isNeedPolylineOptions) {
                         //polylineOptions = (PolylineOptions) rxEvent.getMessage2();
                         //sportMapView.setPolylineOptions(polylineOptions);
                     }
 
-                    Logger.d("地图从service中获取到的经纬度:" + latLng.latitude + "  " + latLng.longitude);
+
                 }
             }
         }, new Consumer<Throwable>() {

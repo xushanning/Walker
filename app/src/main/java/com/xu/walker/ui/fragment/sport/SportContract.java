@@ -76,6 +76,16 @@ public class SportContract {
          * @param sportDistance 运动距离
          */
         void showContinueSportUI(String sportDistance, String sportTime);
+
+        /**
+         * 变更开始运动的按钮UI
+         */
+        void changeUiToBeginSport();
+
+        /**
+         * 变更结束运动的按钮UI
+         */
+        void changeUiToStopSport();
     }
 
     interface ISportPresenter extends IBasePresenter<ISportView> {
