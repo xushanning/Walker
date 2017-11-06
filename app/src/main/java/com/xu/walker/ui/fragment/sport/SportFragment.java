@@ -259,6 +259,7 @@ public class SportFragment extends BaseFragment<SportContract.ISportPresenter> i
     public void changeUiToStopSport() {
         btStart.setBackgroundColor(Color.parseColor("#189ADB"));
         btStart.setText(getResources().getString(R.string.fg_sport_begin_riding));
+        tvSportTitle.setText("行者骑行");
         sportStatus = STOP_SPORTING;
         //初始化tv的值
         tvSpeed.setText(R.string.fg_sport_init_text_0_00);

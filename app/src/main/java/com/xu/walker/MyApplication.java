@@ -20,6 +20,12 @@ public class MyApplication extends Application {
     private DaoSession mDaoSession;
     private static MyApplication mInstance;
 
+
+    /**
+     * 正在运动的id
+     */
+    private static String sportID;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -37,7 +43,6 @@ public class MyApplication extends Application {
     }
 
 
-
     //初始化数据库
     private void initDatabase() {
         mHelper = new DaoMaster.DevOpenHelper(this, "walker-db", null);
@@ -52,5 +57,13 @@ public class MyApplication extends Application {
 
     public SQLiteDatabase getDb() {
         return db;
+    }
+
+    public static String getSportID() {
+        return sportID;
+    }
+
+    public static void setSportID(String sportID) {
+        MyApplication.sportID = sportID;
     }
 }

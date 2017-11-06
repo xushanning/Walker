@@ -80,7 +80,6 @@ public class SportMapActivity extends BaseMapActivity<SportMapContract.ISportMap
     @Override
     public void addPoint(LatLng latLng) {
         if (polylineOptions != null) {
-            polylineOptions.width(15).color(Color.parseColor("#39ABE9"));
             polylineOptions.add(latLng);
             polyline = aMap.addPolyline(polylineOptions);
             if (isMoveCamera) {
@@ -105,6 +104,7 @@ public class SportMapActivity extends BaseMapActivity<SportMapContract.ISportMap
     @Override
     public void setPolylineOptions(PolylineOptions polylineOptions) {
         this.polylineOptions = polylineOptions;
+        this.polylineOptions.width(15).color(Color.parseColor("#39ABE9"));
     }
 
     @Override
@@ -128,7 +128,7 @@ public class SportMapActivity extends BaseMapActivity<SportMapContract.ISportMap
         if (polyline != null) {
             polyline.remove();
         }
-        //告诉presenter，要给一下polylineoptions对象了
+        //告诉presenter，要给一下polylineoptions对象了(从数据库里取的)
         mPresenter.getPolylineOptions();
     }
 

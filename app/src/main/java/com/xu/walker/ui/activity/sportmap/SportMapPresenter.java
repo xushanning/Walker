@@ -3,14 +3,23 @@ package com.xu.walker.ui.activity.sportmap;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.PolylineOptions;
 import com.orhanobut.logger.Logger;
+import com.xu.walker.MyApplication;
+import com.xu.walker.bean.req.LocationInfoBean;
+import com.xu.walker.db.TrajectoryDBBeanDao;
+import com.xu.walker.db.bean.TrajectoryDBBean;
 import com.xu.walker.utils.rx.RxBus;
 import com.xu.walker.utils.rx.RxEvent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by Administrator on 2017/8/17.
@@ -21,7 +30,7 @@ public class SportMapPresenter implements SportMapContract.ISportMapPresenter {
     private SportMapContract.ISportMapView sportMapView;
     private PolylineOptions polylineOptions;
     //是否需要初始化PolylineOptions
-    private boolean isNeedPolylineOptions = false;
+    //private boolean isNeedPolylineOptions = false;
     private LatLng lastLatLng;
 
     @Override
@@ -50,7 +59,7 @@ public class SportMapPresenter implements SportMapContract.ISportMapPresenter {
                         lastLatLng = currentLatLng;
                         Logger.d("地图从service中获取到的经纬度:" + currentLatLng.latitude + "  " + currentLatLng.longitude);
                     }
-                    Map<String, Object> sportData = (HashMap) rxEvent.getMessage3();
+                    HashMap<String, Object> sportData = (HashMap) rxEvent.getMessage2();
                     //里程
                     String totalDistance = (String) sportData.get("totalDistance");
                     String speed = (String) sportData.get("speed");
@@ -59,11 +68,6 @@ public class SportMapPresenter implements SportMapContract.ISportMapPresenter {
                     sportMapView.setSpeed(speed);
                     sportMapView.setTotalDistance(totalDistance);
                     //addpoint放在setpolyline方法上面，防止加载重复的点
-
-                    if (isNeedPolylineOptions) {
-                        //polylineOptions = (PolylineOptions) rxEvent.getMessage2();
-                        //sportMapView.setPolylineOptions(polylineOptions);
-                    }
 
 
                 }
@@ -89,7 +93,25 @@ public class SportMapPresenter implements SportMapContract.ISportMapPresenter {
 
     @Override
     public void getPolylineOptions() {
-        //在下一次接收到数据后，发送polylineoptions
-        isNeedPolylineOptions = true;
+        //在下一次接收到数据后，从数据库里读取存储的轨迹点，发送polylineoptions
+        // isNeedPolylineOptions = true;
+        Observable.create(new ObservableOnSubscribe<Object>() {
+            @Override
+            public void subscribe(ObservableEmitter<Object> e) throws Exception {
+                polylineOptions = new PolylineOptions();
+                if (MyApplication.getSportID() != null) {
+                    TrajectoryDBBeanDao trajectoryDBBeanDao = MyApplication.getInstances().getDaoSession().getTrajectoryDBBeanDao();
+                    TrajectoryDBBean trajectoryDBBean = trajectoryDBBeanDao.queryBuilder().where(TrajectoryDBBeanDao.Properties.TrajectoryID.eq(MyApplication.getSportID())).unique();
+                    List<LocationInfoBean> locationInfoBeans = trajectoryDBBean.getLocationInfoBeans();
+                    if (locationInfoBeans != null && locationInfoBeans.size() > 0) {
+                        for (LocationInfoBean locationInfoBean : locationInfoBeans) {
+                            LatLng latLng = new LatLng(locationInfoBean.getLatitude(), locationInfoBean.getLongitude());
+                            polylineOptions.add(latLng);
+                        }
+                    }
+                }
+                sportMapView.setPolylineOptions(polylineOptions);
+            }
+        }).subscribeOn(Schedulers.io()).subscribe();
     }
 }

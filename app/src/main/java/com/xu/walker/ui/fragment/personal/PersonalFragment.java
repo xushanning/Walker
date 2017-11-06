@@ -13,12 +13,14 @@ import android.widget.TextView;
 
 import com.xu.walker.R;
 import com.xu.walker.base.BaseFragment;
+import com.xu.walker.ui.activity.history.HistoryActivity;
 import com.xu.walker.ui.activity.login.LoginActivity;
 import com.xu.walker.utils.ToastUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 
 /**
@@ -36,6 +38,11 @@ public class PersonalFragment extends BaseFragment<PersonalContract.IPersonalPre
     TextView tvAccount;
     @BindView(R.id.cl_login)
     ConstraintLayout clLogin;
+    @BindView(R.id.tv_history)
+    TextView tvHistory;
+    @BindView(R.id.img_history)
+    ImageView imgHistory;
+
 
     @Override
     public int getLayoutId() {
@@ -82,10 +89,22 @@ public class PersonalFragment extends BaseFragment<PersonalContract.IPersonalPre
     }
 
 
-    @OnClick(R.id.cl_login)
-    public void onClick() {
-        //ToastUtil.toastShort(getContext(), "登陆按钮被点击了");
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
+    @OnClick({R.id.tv_history, R.id.img_history, R.id.cl_login})
+    public void onViewClicked(View view) {
+        Intent intent = null;
+        switch (view.getId()) {
+            case R.id.tv_history:
+                intent = new Intent(getContext(), HistoryActivity.class);
+                break;
+            case R.id.img_history:
+                intent = new Intent(getContext(), HistoryActivity.class);
+                break;
+            case R.id.cl_login:
+                intent = new Intent(getActivity(), LoginActivity.class);
+                break;
+            default:
+                break;
+        }
         startActivity(intent);
     }
 }

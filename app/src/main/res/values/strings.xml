@@ -102,5 +102,6 @@
     <string name="toast_sport_type_swimming">当前为游泳模式</string>
     <string name="toast_sport_type_indoor">当前为室内训练模式</string>
     <string name="toast_sport_type_free">当前为自由行模式</string>
+    <string name="title_activity_history">HistoryActivity</string>
 </resources>
 

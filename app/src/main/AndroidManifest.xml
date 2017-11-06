@@ -39,15 +39,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-         <!--公司 -->
+        <!-- 公司 -->
         <meta-data
-        android:name="com.amap.api.v2.apikey"
-        android:value="7b750541d8630183cb95f6a326fcd858" />
+            android:name="com.amap.api.v2.apikey"
+            android:value="7b750541d8630183cb95f6a326fcd858" />
 
-        <!--家 -->
-        <!--<meta-data-->
-            <!--android:name="com.amap.api.v2.apikey"-->
-            <!--android:value="46c4c1efcfbbac8098fbe1812d94af04" />-->
+        <!-- 家 -->
+        <!-- <meta-data -->
+        <!-- android:name="com.amap.api.v2.apikey" -->
+        <!-- android:value="46c4c1efcfbbac8098fbe1812d94af04" /> -->
 
         <activity android:name=".ui.activity.main.MainActivity">
             <intent-filter>
@@ -62,7 +62,18 @@
         <activity android:name=".ui.activity.sportmap.SportMapActivity" />
 
         <service android:name="com.amap.api.location.APSService" />
-        <service android:name=".service.MainService"></service>
+        <service
+            android:name=".service.MainService"
+            android:enabled="true">
+            <intent-filter android:priority="1000">
+                <action android:name="com.xu.walker.service" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".ui.activity.history.HistoryActivity"
+            android:label="@string/title_activity_history"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
     </application>
 
 </manifest>
